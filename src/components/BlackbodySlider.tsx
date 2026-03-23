@@ -14,7 +14,7 @@ export default function BlackbodySlider() {
       { t: 2000, r: 255, g: 140, b: 20 },  // Warm orange
       { t: 3000, r: 255, g: 180, b: 80 },  // Halogen yellowish
       { t: 4500, r: 255, g: 240, b: 200 }, // Warm white
-      { t: 6500, r: 255, g: 255, b: 255 }, // Pure white (D65 approx)
+      { t: 6500, r: 255, g: 252, b: 245 }, // D65 daylight (slightly cool white)
       { t: 10000, r: 200, g: 220, b: 255 }, // Cool blue
       { t: 15000, r: 160, g: 190, b: 255 }  // Deep cool blue
     ];

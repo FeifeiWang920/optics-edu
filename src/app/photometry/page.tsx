@@ -234,7 +234,7 @@ export default function PhotometryPage() {
           </div>
           <div className="space-y-2">
             <p><strong className="text-white">亮度（cd/m²）</strong>描述的是从特定方向看到的表面<em>发出（或反射）</em>多少光。</p>
-            <p>在同一照度下，白纸（反射率约90%）比黑纸（约5%）亮度高约18倍，这导致我们感知到颜色差异。</p>
+            <p>在同一照度下，白纸（反射率约80-85%）比黑纸（约5%）亮度高约16倍，这导致我们感知到颜色差异。</p>
           </div>
         </div>
       </div>

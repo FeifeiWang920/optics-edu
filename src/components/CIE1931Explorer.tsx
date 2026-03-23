@@ -1,110 +1,286 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 
-// Approximate CIE 1931 spectral locus points (wavelength → xy chromaticity)
-// Data based on CIE 1931 2-degree standard observer
+// CIE 1931 2-degree standard observer spectral locus data (from reference implementation)
 const SPECTRAL_LOCUS: [number, number, number][] = [
-  [380, 0.1741, 0.0050],
-  [390, 0.1738, 0.0102],
-  [400, 0.1733, 0.0177],
-  [410, 0.1726, 0.0297],
-  [420, 0.1714, 0.0578],
-  [430, 0.1689, 0.1168],
-  [440, 0.1644, 0.2178],
-  [450, 0.1566, 0.3620],
-  [460, 0.1440, 0.4931],
-  [470, 0.1241, 0.5923],
-  [480, 0.0913, 0.6546],
-  [490, 0.0454, 0.6936],
-  [500, 0.0082, 0.7072],
-  [510, 0.0139, 0.7067],
-  [520, 0.0743, 0.7037],
-  [530, 0.1547, 0.6916],
-  [540, 0.2296, 0.6741],
-  [550, 0.3016, 0.6529],
-  [560, 0.3731, 0.6245],
-  [570, 0.4441, 0.5547],
-  [580, 0.5125, 0.4866],
-  [590, 0.5752, 0.4242],
-  [600, 0.6270, 0.3725],
-  [610, 0.6658, 0.3340],
-  [620, 0.6915, 0.3083],
-  [630, 0.7079, 0.2920],
-  [640, 0.7190, 0.2812],
-  [650, 0.7260, 0.2742],
-  [660, 0.7300, 0.2700],
-  [670, 0.7320, 0.2680],
-  [680, 0.7334, 0.2666],
-  [690, 0.7344, 0.2656],
-  [700, 0.7347, 0.2653],
-  [710, 0.7347, 0.2653],
-  [720, 0.7347, 0.2653],
-  [730, 0.7347, 0.2653],
-  [740, 0.7347, 0.2653],
-  [750, 0.7347, 0.2653],
-  [760, 0.7347, 0.2653],
-  [770, 0.7347, 0.2653],
-  [780, 0.7347, 0.2653],
+  [380, 0.17411, 0.00496],
+  [385, 0.17401, 0.00498],
+  [390, 0.17380, 0.00492],
+  [395, 0.17356, 0.00492],
+  [400, 0.17334, 0.00480],
+  [405, 0.17302, 0.00478],
+  [410, 0.17258, 0.00480],
+  [415, 0.17209, 0.00483],
+  [420, 0.17141, 0.00510],
+  [425, 0.17030, 0.00579],
+  [430, 0.16888, 0.00690],
+  [435, 0.16690, 0.00855],
+  [440, 0.16441, 0.01086],
+  [445, 0.16111, 0.01379],
+  [450, 0.15664, 0.01771],
+  [455, 0.15099, 0.02274],
+  [460, 0.14396, 0.02970],
+  [465, 0.13550, 0.03988],
+  [470, 0.12412, 0.05780],
+  [475, 0.10960, 0.08684],
+  [480, 0.09129, 0.13270],
+  [485, 0.06871, 0.20072],
+  [490, 0.04539, 0.29498],
+  [495, 0.02346, 0.41270],
+  [500, 0.00817, 0.53842],
+  [505, 0.00386, 0.65482],
+  [510, 0.01387, 0.75019],
+  [515, 0.03885, 0.81202],
+  [520, 0.07430, 0.83380],
+  [525, 0.11416, 0.82621],
+  [530, 0.15472, 0.80586],
+  [535, 0.19288, 0.78163],
+  [540, 0.22962, 0.75433],
+  [545, 0.26578, 0.72432],
+  [550, 0.30160, 0.69231],
+  [555, 0.33736, 0.65885],
+  [560, 0.37310, 0.62445],
+  [565, 0.40873, 0.58961],
+  [570, 0.44406, 0.55472],
+  [575, 0.47878, 0.52020],
+  [580, 0.51249, 0.48659],
+  [585, 0.54479, 0.45443],
+  [590, 0.57515, 0.42423],
+  [595, 0.60293, 0.39650],
+  [600, 0.62704, 0.37249],
+  [605, 0.64823, 0.35140],
+  [610, 0.66576, 0.33401],
+  [615, 0.68008, 0.31975],
+  [620, 0.69151, 0.30834],
+  [625, 0.70061, 0.29930],
+  [630, 0.70792, 0.29203],
+  [635, 0.71403, 0.28593],
+  [640, 0.71903, 0.28094],
+  [645, 0.72303, 0.27695],
+  [650, 0.72599, 0.27401],
+  [655, 0.72827, 0.27173],
+  [660, 0.72997, 0.27003],
+  [665, 0.73109, 0.26891],
+  [670, 0.73199, 0.26801],
+  [675, 0.73272, 0.26728],
+  [680, 0.73342, 0.26658],
+  [685, 0.73405, 0.26595],
+  [690, 0.73439, 0.26561],
+  [695, 0.73459, 0.26541],
+  [700, 0.73469, 0.26531],
+  [705, 0.73469, 0.26531],
+  [710, 0.73469, 0.26531],
+  [715, 0.73469, 0.26531],
+  [720, 0.73469, 0.26531],
+  [725, 0.73469, 0.26531],
+  [730, 0.73469, 0.26531],
+  [735, 0.73469, 0.26531],
+  [740, 0.73469, 0.26531],
+  [745, 0.73469, 0.26531],
+  [750, 0.73469, 0.26531],
+  [755, 0.73469, 0.26531],
+  [760, 0.73469, 0.26531],
+  [765, 0.73469, 0.26531],
+  [770, 0.73469, 0.26531],
+  [775, 0.73469, 0.26531],
+  [780, 0.73469, 0.26531],
 ];
 
-// SVG canvas using xRange [0,0.8] yRange [0,0.9]
-const SVG_W = 350;
-const SVG_H = 350;
-const PAD = 30;
+// Planckian locus data
+const PLANCKIAN_LOCUS: [number, number, number][] = [
+  [1000, 0.6528, 0.3444],
+  [1500, 0.5857, 0.3931],
+  [2000, 0.5267, 0.4133],
+  [2500, 0.4770, 0.4137],
+  [3000, 0.4369, 0.4041],
+  [3500, 0.4053, 0.3907],
+  [4000, 0.3804, 0.3768],
+  [4500, 0.3608, 0.3636],
+  [5000, 0.3451, 0.3516],
+  [5500, 0.3325, 0.3411],
+  [6000, 0.3221, 0.3318],
+  [6500, 0.3135, 0.3237],
+  [7000, 0.3064, 0.3166],
+  [8000, 0.2952, 0.3049],
+  [9000, 0.2869, 0.2956],
+  [10000, 0.2807, 0.2883],
+  [15000, 0.2622, 0.2660],
+];
+
+// Canvas dimensions
+const CANVAS_W = 520;
+const CANVAS_H = 500;
+const PAD = 50;
+
+// CIE coordinate range
 const X_MIN = 0, X_MAX = 0.8, Y_MIN = 0, Y_MAX = 0.9;
 
-function toSVG(cx: number, cy: number): [number, number] {
-  const sx = PAD + (cx - X_MIN) / (X_MAX - X_MIN) * (SVG_W - PAD * 2);
-  const sy = (SVG_H - PAD) - (cy - Y_MIN) / (Y_MAX - Y_MIN) * (SVG_H - PAD * 2);
-  return [sx, sy];
+// sRGB primaries in xy
+const SRGB_RED = { x: 0.64, y: 0.33 };
+const SRGB_GREEN = { x: 0.30, y: 0.60 };
+const SRGB_BLUE = { x: 0.15, y: 0.06 };
+
+// Check if point is inside triangle (barycentric method)
+function pointInTriangle(px: number, py: number, p1: {x: number, y: number}, p2: {x: number, y: number}, p3: {x: number, y: number}): boolean {
+  const area = 0.5 * (-p2.y * p3.x + p1.y * (-p2.x + p3.x) + p1.x * (p2.y - p3.y) + p2.x * p3.y);
+  const s = 1 / (2 * area) * (p1.y * p3.x - p1.x * p3.y + (p3.y - p1.y) * px + (p1.x - p3.x) * py);
+  const t = 1 / (2 * area) * (p1.x * p2.y - p1.y * p2.x + (p1.y - p2.y) * px + (p2.x - p1.x) * py);
+  return s >= 0 && t >= 0 && 1 - s - t >= 0;
 }
 
-// Wavelength to approximate RGB color for spectral locus coloring
-function wlToColor(nm: number): string {
-  if (nm < 380) return "#8800ff";
-  if (nm < 420) return `hsl(${280 + (nm - 380) / 40 * 40},100%,45%)`;   // violet
-  if (nm < 460) return `hsl(${240 + (nm - 420) / 40 * 30},100%,50%)`;   // blue
-  if (nm < 490) return `hsl(${210 + (nm - 460) / 30 * 30},100%,50%)`;   // cyan
-  if (nm < 530) return `hsl(${180 - (nm - 490) / 40 * 60},100%,45%)`;   // green
-  if (nm < 570) return `hsl(${120 - (nm - 530) / 40 * 60},100%,45%)`;   // yellow-green to yellow
-  if (nm < 600) return `hsl(${60 - (nm - 570) / 30 * 30},100%,50%)`;    // yellow to orange
-  if (nm < 640) return `hsl(${30 - (nm - 600) / 40 * 30},100%,45%)`;    // orange to red
-  return "#ff0000";
+// Check if point is inside sRGB gamut triangle
+function inSRGBGamut(x: number, y: number): boolean {
+  return pointInTriangle(x, y, SRGB_RED, SRGB_GREEN, SRGB_BLUE);
 }
 
-// Key automotive lighting chromaticity regions (simplified outlines)
-const AUTO_REGIONS = [
-  { name: "白色（前照灯）", color: "#ffffff", points: [[0.310,0.348],[0.380,0.348],[0.380,0.300],[0.310,0.300]] },
-  { name: "琥珀色（转向灯）", color: "#f59e0b", points: [[0.544,0.452],[0.598,0.402],[0.586,0.386],[0.556,0.398]] },
-  { name: "红色（制动灯）", color: "#ef4444", points: [[0.690,0.310],[0.720,0.258],[0.665,0.258],[0.640,0.340]] },
-];
+// Check if point is inside the spectral locus
+function isInsideLocus(x: number, y: number, locus: [number, number, number][]): boolean {
+  let inside = false;
+  for (let i = 0, j = locus.length - 1; i < locus.length; j = i++) {
+    const xi = locus[i][1], yi = locus[i][2];
+    const xj = locus[j][1], yj = locus[j][2];
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
+// CIE 1931 chromaticity diagram color rendering
+// Uses XYZ to sRGB matrix conversion with proper gamma correction
+// Based on CIE 15: Colorimetry standard and reference implementations
+function xyToApproxRgb(x: number, y: number): [number, number, number] {
+  // Convert CIE xy chromaticity to XYZ using the correct formula
+  // xyY -> XYZ: X = (x/y) * Y, Z = ((1-x-y)/y) * Y
+  // Using Y = 1.0 (constant luminance) for the chromaticity diagram visualization
+  const Y = 1.0;
+  const X = (x / y) * Y;
+  const Z = ((1 - x - y) / y) * Y;
+
+  // XYZ to linear sRGB conversion matrix (column-major order)
+  // These coefficients are from the sRGB specification (IEC 61966-2-1)
+  let r = 3.2404542 * X - 1.5371385 * Y - 0.4985314 * Z;
+  let g = -0.9692660 * X + 1.8760108 * Y + 0.0415560 * Z;
+  let b = 0.0556434 * X - 0.2040259 * Y + 1.0572252 * Z;
+
+  // Handle out-of-gamut colors: normalize if any component exceeds [0, 1]
+  // This preserves hue while reducing saturation for unrepresentable colors
+  const maxComponent = Math.max(r, g, b);
+  const minComponent = Math.min(r, g, b);
+
+  if (maxComponent > 1.0 || minComponent < 0.0) {
+    // Calculate scaling factor to bring all components into [0, 1]
+    const scale = maxComponent > 1.0 ? 1.0 / maxComponent : 1.0;
+    r *= scale;
+    g *= scale;
+    b *= scale;
+  }
+
+  // Clip to [0, 1] range before gamma correction
+  r = Math.max(0, Math.min(1, r));
+  g = Math.max(0, Math.min(1, g));
+  b = Math.max(0, Math.min(1, b));
+
+  // Apply sRGB gamma correction (EOTF) per IEC 61966-2-1
+  const gammaCorrect = (c: number): number => {
+    return c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
+  };
+
+  return [gammaCorrect(r), gammaCorrect(g), gammaCorrect(b)];
+}
+
+// Get color for wavelength using standard spectral locus colors
+// Based on CIE 1931 2° standard observer data
+function wlToHsl(nm: number): string {
+  // More accurate spectral color mapping based on wavelength
+  if (nm < 380) return "hsl(280, 100%, 50%)";
+  if (nm < 420) return `hsl(${260 + (nm - 380) * 0.5}, 100%, ${50 + (nm - 380) * 0.1}%)`;
+  if (nm < 450) return `hsl(${240 + (nm - 420) * 0.67}, 100%, ${55 + (nm - 420) * 0.17}%)`;
+  if (nm < 490) return `hsl(${220 - (nm - 450) * 1.25}, 100%, ${55 + (nm - 450) * 0.25}%)`;
+  if (nm < 510) return `hsl(${180 - (nm - 490) * 2}, 100%, ${50 + (nm - 490) * 0.5}%)`;
+  if (nm < 550) return `hsl(${140 - (nm - 510) * 2.5}, 100%, ${55 - (nm - 510) * 0.25}%)`;
+  if (nm < 580) return `hsl(${60 - (nm - 550) * 1.33}, 100%, ${55 - (nm - 550) * 0.17}%)`;
+  if (nm < 620) return `hsl(${35 - (nm - 580) * 0.5}, 100%, ${55 - (nm - 580) * 0.125}%)`;
+  if (nm < 700) return `hsl(${10 - (nm - 620) * 0.25}, 100%, ${50 - (nm - 620) * 0.0625}%)`;
+  return "hsl(0, 100%, 50%)";
+}
+
+// Convert CIE (x,y) to canvas pixel coordinates
+function cieToCanvas(cx: number, cy: number): [number, number] {
+  const px = PAD + (cx - X_MIN) / (X_MAX - X_MIN) * (CANVAS_W - PAD * 2);
+  const py = (CANVAS_H - PAD) - (cy - Y_MIN) / (Y_MAX - Y_MIN) * (CANVAS_H - PAD * 2);
+  return [px, py];
+}
 
 export default function CIE1931Explorer() {
   const [point, setPoint] = useState({ x: 0.3127, y: 0.3290, label: "D65 白光" });
-  const [hoveredWl, setHoveredWl] = useState<number | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  // Generate the CIE gamut image
+  useEffect(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = CANVAS_W;
+    canvas.height = CANVAS_H;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Light gray background
+    ctx.fillStyle = "#e8e8e8";
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+    const imageData = ctx.createImageData(CANVAS_W, CANVAS_H);
+    const data = imageData.data;
+
+    const plotLeft = PAD;
+    const plotRight = CANVAS_W - PAD;
+    const plotTop = PAD;
+    const plotBottom = CANVAS_H - PAD;
+    const plotWidth = plotRight - plotLeft;
+    const plotHeight = plotBottom - plotTop;
+
+    for (let py = 0; py < CANVAS_H; py++) {
+      for (let px = 0; px < CANVAS_W; px++) {
+        const idx = (py * CANVAS_W + px) * 4;
+
+        if (px >= plotLeft && px < plotRight && py >= plotTop && py < plotBottom) {
+          const cx = X_MIN + ((px - plotLeft) / plotWidth) * (X_MAX - X_MIN);
+          const cy = Y_MAX - ((py - plotTop) / plotHeight) * (Y_MAX - Y_MIN);
+
+          if (isInsideLocus(cx, cy, SPECTRAL_LOCUS)) {
+            const [r, g, b] = xyToApproxRgb(cx, cy);
+
+            data[idx] = Math.round(r * 255);
+            data[idx + 1] = Math.round(g * 255);
+            data[idx + 2] = Math.round(b * 255);
+            data[idx + 3] = 255;
+          }
+        }
+      }
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+    setImageUrl(canvas.toDataURL());
+  }, []);
 
   const handleSVGClick = (e: React.MouseEvent<SVGSVGElement>) => {
     const svg = e.currentTarget;
     const rect = svg.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width * SVG_W;
-    const py = (e.clientY - rect.top) / rect.height * SVG_H;
-    // Convert to CIE coordinates
-    const cx = X_MIN + (px - PAD) / (SVG_W - PAD * 2) * (X_MAX - X_MIN);
-    const cy = Y_MIN + ((SVG_H - PAD) - py) / (SVG_H - PAD * 2) * (Y_MAX - Y_MIN);
-    if (cx >= 0 && cx <= X_MAX && cy >= 0 && cy <= Y_MAX) {
-      setPoint({ x: Math.round(cx * 1000) / 1000, y: Math.round(cy * 1000) / 1000, label: "自定义点" });
+    const px = (e.clientX - rect.left) / rect.width * CANVAS_W;
+    const py = (e.clientY - rect.top) / rect.height * CANVAS_H;
+
+    const plotLeft = PAD, plotRight = CANVAS_W - PAD;
+    const plotTop = PAD, plotBottom = CANVAS_H - PAD;
+
+    if (px >= plotLeft && px <= plotRight && py >= plotTop && py <= plotBottom) {
+      const cx = X_MIN + ((px - plotLeft) / (plotRight - plotLeft)) * (X_MAX - X_MIN);
+      const cy = Y_MAX - ((py - plotTop) / (plotBottom - plotTop)) * (Y_MAX - Y_MIN);
+      setPoint({ x: Math.round(cx * 10000) / 10000, y: Math.round(cy * 10000) / 10000, label: "自定义点" });
     }
   };
 
-  // Build the spectral locus path
-  const locusPoints = SPECTRAL_LOCUS.map(([, x, y]) => toSVG(x, y));
-  const locusPathD = locusPoints.map(([sx, sy], i) => `${i === 0 ? "M" : "L"} ${sx.toFixed(1)} ${sy.toFixed(1)}`).join(" ") + " Z";
-
-  // Tick marks
-  const xTicks = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7];
-  const yTicks = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8];
+  const xTicks = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8];
+  const yTicks = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
 
   return (
     <div className="glass-panel p-6 space-y-5">
@@ -116,162 +292,134 @@ export default function CIE1931Explorer() {
           <span className="text-gray-500">{point.label}</span>
         </div>
       </div>
-      <p className="text-xs text-gray-500">基于 CIE 1931 标准色度观察者光谱轨迹数据绘制。点击图表可读取色品坐标。</p>
+      <p className="text-xs text-gray-500">
+        基于 CIE 1931 2° 标准色度观察者数据（CIE 15:2004）。点击图表可读取色品坐标。
+      </p>
 
-      <div className="relative bg-black/40 rounded-xl overflow-hidden border border-white/5 cursor-crosshair">
+      <div className="relative rounded-xl overflow-hidden border border-white/10 cursor-crosshair" style={{ background: "#e8e8e8" }}>
         <svg
-          viewBox={`0 0 ${SVG_W} ${SVG_H}`}
+          viewBox={`0 0 ${CANVAS_W} ${CANVAS_H}`}
           className="w-full"
           onClick={handleSVGClick}
           xmlns="http://www.w3.org/2000/svg"
         >
-          <defs>
-            {/* Correct CIE gamut gradient: white center, spectral colors at edges */}
-            <radialGradient id="cieCenter" cx="39%" cy="63%" r="65%" fx="39%" fy="62%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95"/>
-              <stop offset="30%" stopColor="#ffffff" stopOpacity="0.6"/>
-              <stop offset="100%" stopColor="#ffffff" stopOpacity="0"/>
-            </radialGradient>
-            <linearGradient id="cieBlueGreen" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#4400ff" stopOpacity="0.6"/>
-              <stop offset="50%" stopColor="#00cc44" stopOpacity="0.5"/>
-              <stop offset="100%" stopColor="#ffff00" stopOpacity="0.4"/>
-            </linearGradient>
-            <linearGradient id="cieRedOrange" x1="100%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="#ff2200" stopOpacity="0.7"/>
-              <stop offset="50%" stopColor="#ff8800" stopOpacity="0.5"/>
-              <stop offset="100%" stopColor="#ffffff" stopOpacity="0"/>
-            </linearGradient>
-            <clipPath id="cieClip">
-              <path d={locusPathD}/>
-            </clipPath>
-          </defs>
+          {/* Background */}
+          <rect x="0" y="0" width={CANVAS_W} height={CANVAS_H} fill="#e8e8e8"/>
+
+          {/* Color gamut image */}
+          {imageUrl && (
+            <image href={imageUrl} x="0" y="0" width={CANVAS_W} height={CANVAS_H}/>
+          )}
 
           {/* Grid lines */}
-          {xTicks.map(x => {
-            const [sx, sy0] = toSVG(x, Y_MIN);
-            const [, sy1] = toSVG(x, Y_MAX);
-            return <line key={`gx${x}`} x1={sx} y1={sy0} x2={sx} y2={sy1} stroke="rgba(255,255,255,0.06)" strokeWidth="0.5"/>;
+          {xTicks.slice(1, -1).map(x => {
+            const [px, py0] = cieToCanvas(x, Y_MIN);
+            const [, py1] = cieToCanvas(x, Y_MAX);
+            return <line key={`gx${x}`} x1={px} y1={py0} x2={px} y2={py1} stroke="rgba(0,0,0,0.1)" strokeWidth="0.5"/>;
           })}
-          {yTicks.map(y => {
-            const [sx0, sy] = toSVG(X_MIN, y);
-            const [sx1, ] = toSVG(X_MAX, y);
-            return <line key={`gy${y}`} x1={sx0} y1={sy} x2={sx1} y2={sy} stroke="rgba(255,255,255,0.06)" strokeWidth="0.5"/>;
+          {yTicks.slice(1, -1).map(y => {
+            const [px0, py] = cieToCanvas(X_MIN, y);
+            const [px1] = cieToCanvas(X_MAX, y);
+            return <line key={`gy${y}`} x1={px0} y1={py} x2={px1} y2={py} stroke="rgba(0,0,0,0.1)" strokeWidth="0.5"/>;
           })}
 
           {/* Axes */}
-          {(() => { const [sx,sy] = toSVG(0, 0); const [sx2] = toSVG(0.8, 0); const [,sy2] = toSVG(0, 0.85); return (<>
-            <line x1={sx} y1={sy} x2={sx2} y2={sy} stroke="rgba(255,255,255,0.2)" strokeWidth="1"/>
-            <line x1={sx} y1={sy} x2={sx} y2={sy2} stroke="rgba(255,255,255,0.2)" strokeWidth="1"/>
-          </>); })()}
+          <line x1={PAD} y1={CANVAS_H - PAD} x2={CANVAS_W - PAD} y2={CANVAS_H - PAD} stroke="rgba(0,0,0,0.5)" strokeWidth="1"/>
+          <line x1={PAD} y1={CANVAS_H - PAD} x2={PAD} y2={PAD} stroke="rgba(0,0,0,0.5)" strokeWidth="1"/>
 
           {/* Axis labels */}
-          {xTicks.map(x => { const [sx, sy] = toSVG(x, 0); return <text key={`tx${x}`} x={sx} y={sy+12} textAnchor="middle" fill="#555" fontSize="9">{x}</text>; })}
-          {yTicks.map(y => { const [sx, sy] = toSVG(0, y); return <text key={`ty${y}`} x={sx-6} y={sy+3} textAnchor="end" fill="#555" fontSize="9">{y}</text>; })}
-          <text x={SVG_W / 2} y={SVG_H - 4} textAnchor="middle" fill="#666" fontSize="10">x（色品坐标）</text>
-          <text x={12} y={SVG_H / 2} textAnchor="middle" fill="#666" fontSize="10" transform={`rotate(-90 12 ${SVG_H/2})`}>y（色品坐标）</text>
-
-          {/* Gamut fill — layered gradients clipped to locus */}
-          <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#cieBlueGreen)" clipPath="url(#cieClip)"/>
-          <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#cieRedOrange)" clipPath="url(#cieClip)"/>
-          <rect x="0" y="0" width={SVG_W} height={SVG_H} fill="url(#cieCenter)" clipPath="url(#cieClip)"/>
-
-          {/* Spectral locus outline with color-coded segments */}
-          {SPECTRAL_LOCUS.slice(0, -1).map(([nm, x, y], i) => {
-            const [sx1, sy1] = toSVG(x, y);
-            const [sx2, sy2] = toSVG(SPECTRAL_LOCUS[i + 1][1], SPECTRAL_LOCUS[i + 1][2]);
-            return <line key={nm} x1={sx1} y1={sy1} x2={sx2} y2={sy2} stroke={wlToColor(nm)} strokeWidth="2.5"/>;
+          {xTicks.map(x => {
+            const [px, py] = cieToCanvas(x, 0);
+            return <text key={`tx${x}`} x={px} y={py + 16} textAnchor="middle" fill="#444" fontSize="10">{x}</text>;
           })}
-          {/* Purple line (closing line 380-780) */}
+          {yTicks.map(y => {
+            const [px, py] = cieToCanvas(0, y);
+            return <text key={`ty${y}`} x={px - 10} y={py + 4} textAnchor="end" fill="#444" fontSize="10">{y}</text>;
+          })}
+          <text x={CANVAS_W / 2} y={CANVAS_H - 10} textAnchor="middle" fill="#333" fontSize="11">x</text>
+          <text x={14} y={CANVAS_H / 2} textAnchor="middle" fill="#333" fontSize="11" transform={`rotate(-90 14 ${CANVAS_H / 2})`}>y</text>
+
+          {/* Spectral locus outline */}
+          {SPECTRAL_LOCUS.slice(0, -1).map(([nm, x, y], i) => {
+            const [px1, py1] = cieToCanvas(x, y);
+            const [px2, py2] = cieToCanvas(SPECTRAL_LOCUS[i + 1][1], SPECTRAL_LOCUS[i + 1][2]);
+            return <line key={nm} x1={px1} y1={py1} x2={px2} y2={py2} stroke={wlToHsl(nm)} strokeWidth="1.5"/>;
+          })}
+
+          {/* Purple boundary line */}
           {(() => {
-            const [sx1, sy1] = toSVG(SPECTRAL_LOCUS[0][1], SPECTRAL_LOCUS[0][2]);
-            const [sx2, sy2] = toSVG(SPECTRAL_LOCUS[SPECTRAL_LOCUS.length - 1][1], SPECTRAL_LOCUS[SPECTRAL_LOCUS.length - 1][2]);
-            return <line x1={sx1} y1={sy1} x2={sx2} y2={sy2} stroke="#9933ff" strokeWidth="1.5" strokeDasharray="4,2" opacity="0.7"/>;
+            const [px1, py1] = cieToCanvas(SPECTRAL_LOCUS[0][1], SPECTRAL_LOCUS[0][2]);
+            const [px2, py2] = cieToCanvas(SPECTRAL_LOCUS[SPECTRAL_LOCUS.length - 1][1], SPECTRAL_LOCUS[SPECTRAL_LOCUS.length - 1][2]);
+            return <line x1={px1} y1={py1} x2={px2} y2={py2} stroke="#8866aa" strokeWidth="1" strokeDasharray="4,2" opacity="0.8"/>;
           })()}
 
           {/* Wavelength labels */}
-          {[460, 490, 520, 560, 590, 620, 660].map(nm => {
+          {[420, 460, 490, 520, 550, 580, 620, 700].map(nm => {
             const entry = SPECTRAL_LOCUS.find(([w]) => w === nm);
             if (!entry) return null;
-            const [sx, sy] = toSVG(entry[1], entry[2]);
+            const [px, py] = cieToCanvas(entry[1], entry[2]);
+            const isLeft = nm < 510;
+            const isBottom = nm >= 650;
+            const offsetX = isLeft ? -14 : 6;
+            const offsetY = isBottom ? 14 : -4;
             return (
               <g key={`wl${nm}`}>
-                <circle cx={sx} cy={sy} r="2.5" fill={wlToColor(nm)}/>
-                <text x={sx + 5} y={sy + 3} fill={wlToColor(nm)} fontSize="8">{nm}</text>
+                <circle cx={px} cy={py} r="1.5" fill={wlToHsl(nm)}/>
+                <text x={px + offsetX} y={py + offsetY} fill={wlToHsl(nm)} fontSize="9" fontWeight="500" textAnchor={isLeft ? "end" : "start"}>{nm}</text>
               </g>
             );
           })}
 
-          {/* Automotive regulation zones */}
-          {AUTO_REGIONS.map(({ name, color, points }) => {
-            const d = points.map(([x, y]: number[], i: number) => {
-              const [sx, sy] = toSVG(x, y);
-              return `${i === 0 ? "M" : "L"} ${sx} ${sy}`;
-            }).join(" ") + " Z";
-            return (
-              <g key={name}>
-                <path d={d} fill={color} fillOpacity="0.15" stroke={color} strokeWidth="1.5" strokeDasharray="4,2"/>
-              </g>
-            );
+          {/* Planckian locus */}
+          {PLANCKIAN_LOCUS.slice(0, -1).map(([cct, x, y], i) => {
+            const [px1, py1] = cieToCanvas(x, y);
+            const [px2, py2] = cieToCanvas(PLANCKIAN_LOCUS[i + 1][1], PLANCKIAN_LOCUS[i + 1][2]);
+            return <line key={cct} x1={px1} y1={py1} x2={px2} y2={py2} stroke="#333" strokeWidth="1.5"/>;
           })}
 
-          {/* Key reference points */}
+          {/* CCT labels */}
+          {[[3000, 0.4369, 0.4041], [4000, 0.3804, 0.3768], [6000, 0.3221, 0.3318], [10000, 0.2807, 0.2883]].map(([cct, x, y]) => {
+            const [px, py] = cieToCanvas(x as number, y as number);
+            return <text key={cct} x={px + 4} y={py + 12} fill="#333" fontSize="8">{cct}K</text>;
+          })}
+
+          {/* Reference points */}
           {[
-            { x: 0.3127, y: 0.3290, label: "D65（标准日光）", color: "#ffffff" },
-            { x: 0.3333, y: 0.3333, label: "E（等能白）", color: "#cccccc" },
-          ].map(({ x, y, label, color }) => {
-            const [sx, sy] = toSVG(x, y);
+            { x: 0.3127, y: 0.3290, label: "D65", desc: "标准日光" },
+            { x: 0.3333, y: 0.3333, label: "E", desc: "等能白" },
+          ].map(({ x, y, label, desc }) => {
+            const [px, py] = cieToCanvas(x, y);
             return (
               <g key={label}>
-                <circle cx={sx} cy={sy} r="4" fill="none" stroke={color} strokeWidth="1.5"/>
-                <circle cx={sx} cy={sy} r="1.5" fill={color}/>
-                <text x={sx + 6} y={sy - 4} fill={color} fontSize="8">{label}</text>
+                <circle cx={px} cy={py} r="4" fill="none" stroke="#000" strokeWidth="1.5"/>
+                <circle cx={px} cy={py} r="1.5" fill="#000"/>
+                <text x={px + 8} y={py - 2} fill="#000" fontSize="9" fontWeight="bold">{label}</text>
+                <text x={px + 8} y={py + 9} fill="#555" fontSize="7">{desc}</text>
               </g>
             );
-          })}
-
-          {/* Planckian locus (CCT curve) — approximate key points */}
-          {[
-            [1500, 0.585, 0.393], [2000, 0.527, 0.413], [2500, 0.477, 0.413],
-            [3000, 0.437, 0.404], [4000, 0.380, 0.377], [5000, 0.345, 0.352],
-            [6500, 0.3127, 0.3290], [8000, 0.292, 0.309], [10000, 0.279, 0.292],
-          ].map(([cct, x, y], i, arr) => {
-            if (i === 0) return null;
-            const [sx1, sy1] = toSVG(arr[i-1][1], arr[i-1][2]);
-            const [sx2, sy2] = toSVG(x, y);
-            return <line key={cct} x1={sx1} y1={sy1} x2={sx2} y2={sy2} stroke="#fbbf24" strokeWidth="1" strokeDasharray="3,2" opacity="0.6"/>;
-          })}
-          {/* CCT labels */}
-          {[[3000, 0.437, 0.404], [6500, 0.3127, 0.329]].map(([cct, x, y]) => {
-            const [sx, sy] = toSVG(x as number, y as number);
-            return <text key={cct} x={sx + 4} y={sy + 3} fill="#fbbf24" fontSize="7.5" opacity="0.7">{cct}K</text>;
           })}
 
           {/* Selected point */}
           {(() => {
-            const [sx, sy] = toSVG(point.x, point.y);
+            const [px, py] = cieToCanvas(point.x, point.y);
             return (
-              <motion.g animate={{ cx: sx, cy: sy }}>
-                <circle cx={sx} cy={sy} r="6" fill="none" stroke="#3b82f6" strokeWidth="1.5"/>
-                <circle cx={sx} cy={sy} r="2.5" fill="#3b82f6"/>
-              </motion.g>
+              <g>
+                <circle cx={px} cy={py} r="7" fill="none" stroke="#0066cc" strokeWidth="2"/>
+                <circle cx={px} cy={py} r="2.5" fill="#0066cc"/>
+              </g>
             );
           })()}
         </svg>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-1 bg-white rounded opacity-70"/>
-          <span className="text-gray-400">光谱轨迹（纯单色光）</span>
+          <div className="w-6 h-0.5 bg-gradient-to-r from-purple-500 via-green-500 to-red-500 rounded"/>
+          <span className="text-gray-400">光谱轨迹（纯单色光 380-780nm）</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-6 h-1 bg-yellow-400 rounded opacity-60" style={{borderStyle:"dashed", borderTop:"2px dashed"}}/>
-          <span className="text-gray-400">普朗克轨迹（色温曲线）</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-3 border border-dashed border-amber-400 opacity-60"/>
-          <span className="text-gray-400">车灯法规色度区域</span>
+          <div className="w-6 h-0.5 bg-gray-800 rounded"/>
+          <span className="text-gray-400">普朗克轨迹（黑体辐射色温曲线）</span>
         </div>
       </div>
     </div>

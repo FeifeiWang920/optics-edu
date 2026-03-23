@@ -283,7 +283,7 @@ export default function InteractionsPage() {
               <p className="text-xs text-gray-400"><strong>阿贝数越大，色散越小</strong>（越适合精密光学系统）</p>
             </div>
             <div className="p-3 bg-black/40 rounded font-mono text-xs space-y-1 border border-white/5">
-              <p className="text-green-400">PMMA：V ≈ 57.4（色散较小）</p>
+              <p className="text-green-400">PMMA：V ≈ 55.2（色散较小）</p>
               <p className="text-blue-400">PC：  V ≈ 30.0（色散较大，彩色边缘明显）</p>
             </div>
           </div>
