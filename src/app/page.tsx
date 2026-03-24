@@ -1,7 +1,7 @@
 "use client";
 
 import SpectrumSlider from "@/components/SpectrumSlider";
-import { ArrowRight, Zap, Eye, Aperture, Layers, FlaskConical } from "lucide-react";
+import { ArrowRight, Zap, Eye, Layers, FlaskConical } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 

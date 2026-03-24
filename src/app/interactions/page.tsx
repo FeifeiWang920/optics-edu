@@ -99,14 +99,14 @@ export default function InteractionsPage() {
           <div className="space-y-5 text-gray-300 text-sm leading-relaxed">
             <p>光从一种介质进入另一种介质时，速度改变，传播方向发生偏折，称为<strong>折射</strong>。折射定律（斯涅尔定律）精确描述了这一关系：</p>
             <div className="p-5 bg-secondary-500/5 rounded-xl border border-secondary-500/10 space-y-3">
-              <h4 className="font-bold text-white">斯涅尔定律（Snell's Law）</h4>
+              <h4 className="font-bold text-white">斯涅尔定律（Snell{' '}{'´s'} Law）</h4>
               <div className="font-mono text-center p-3 bg-black/40 rounded-lg text-secondary-300 text-lg">
                 n₁ · sin θ₁ = n₂ · sin θ₂
               </div>
               <p className="text-xs text-gray-400">n 为折射率，θ 为与法线的夹角。折射率 = c / v（光速/介质中光速）</p>
             </div>
             <div className="p-4 bg-black/40 rounded-xl font-mono text-xs border border-white/5 space-y-1">
-              <p className="text-gray-500">// 常见光学材料折射率（对钠黄光 589nm）</p>
+              {/* 常见光学材料折射率（对钠黄光 589nm） */}
               <p className="text-white">空气 n ≈ 1.000</p>
               <p className="text-white">水   n ≈ 1.333</p>
               <p className="text-green-400">PMMA (亚克力)  n ≈ 1.492</p>
@@ -236,7 +236,7 @@ export default function InteractionsPage() {
               </div>
             </div>
             <div className="p-3 bg-black/40 rounded-lg font-mono text-xs border border-white/5 space-y-1">
-              <p className="text-gray-500">// 垂直入射反射率计算</p>
+              {/* 垂直入射反射率计算 */}
               <p className="text-green-400">空气→PMMA：R = ((1-1.492)/(1+1.492))² ≈ <strong className="text-white">3.9%</strong></p>
               <p className="text-blue-400">空气→PC：R = ((1-1.586)/(1+1.586))² ≈ <strong className="text-white">5.1%</strong></p>
             </div>

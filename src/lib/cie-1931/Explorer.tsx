@@ -9,11 +9,9 @@
 import { useState, useEffect } from 'react';
 import { SPECTRAL_LOCUS, PLANCKIAN_LOCUS, SRGB_PRIMARIES, WHITEPOINTS, CANVAS_CONFIG } from './constants';
 import {
-  xyToRgb,
   wavelengthToHsl,
   cieToCanvas,
   canvasToCie,
-  isInsideSRGBGamut,
 } from './utils';
 import { generateCIEChromaticityDataURL } from './generator';
 

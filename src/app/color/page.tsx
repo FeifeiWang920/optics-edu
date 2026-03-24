@@ -1,7 +1,8 @@
+import Link from "next/link";
 import CIE1931Explorer from "@/lib/cie-1931";
 import ColorMixer from "@/components/ColorMixer";
 import BlackbodySlider from "@/components/BlackbodySlider";
-import { Palette, Layers, Box, Info, FlaskConical, SunMedium } from "lucide-react";
+import { Palette, Layers, Box, Info, SunMedium, GraduationCap, ArrowRight } from "lucide-react";
 
 export default function ColorimetryPage() {
   return (
@@ -43,6 +44,29 @@ export default function ColorimetryPage() {
         </div>
       </section>
 
+      {/* Deep Learning Entry */}
+      <section className="glass-panel p-8 bg-gradient-to-r from-primary-500/10 to-secondary-500/10 border border-primary-500/20">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <GraduationCap className="text-primary-400" />
+              深入学习色度学
+            </h2>
+            <p className="text-gray-400 text-sm max-w-xl">
+              从费曼物理学讲义到CIE国际标准，系统学习色度学的完整知识体系。
+              包含8个章节，从入门到提高。
+            </p>
+          </div>
+          <Link
+            href="/color/advanced"
+            className="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-medium flex items-center gap-2 transition-colors shrink-0"
+          >
+            进入深度解析
+            <ArrowRight size={18} />
+          </Link>
+        </div>
+      </section>
+
       {/* Color Matching and Trichromatic Theory */}
       <section className="space-y-6">
         <h2 className="text-3xl font-bold">三色学说与颜色匹配实验</h2>
@@ -52,7 +76,7 @@ export default function ColorimetryPage() {
               1807年，托马斯·杨（T.Young）提出三色学说，后由赫尔姆霍兹完善。核心观点：人眼存在三种感色细胞（LMS视锥），任何颜色都可以由<strong>红（R）、绿（G）、蓝（B）</strong>三种原色的适当比例混合匹配。
             </p>
             <div className="p-4 bg-black/40 rounded-xl font-mono text-xs border border-white/5 space-y-2 text-gray-300">
-              <p className="text-gray-500">// 颜色匹配方程</p>
+              {/* 颜色匹配方程 */}
               <p>C ≡ R·[R] + G·[G] + B·[B]</p>
               <p className="text-xs text-gray-500">R、G、B 为三刺激值，表示三种原色所需的量</p>
             </div>
@@ -73,7 +97,7 @@ export default function ColorimetryPage() {
       <section className="space-y-6">
         <h2 className="text-3xl font-bold">CIE 1931 标准色度学系统</h2>
         <div className="text-sm text-gray-400 max-w-3xl space-y-3">
-          <p>由于 RGB 实验中某些颜色需要"负值"（难以理解和使用），1931年国际照明委员会（CIE）引入了三个<strong>虚拟原色 X、Y、Z</strong>，使任何可见颜色的三刺激值均为正数。</p>
+          <p>由于 RGB 实验中某些颜色需要{'"负值"'}（难以理解和使用），1931年国际照明委员会（CIE）引入了三个<strong>虚拟原色 X、Y、Z</strong>，使任何可见颜色的三刺激值均为正数。</p>
           <p>进一步，令 x = X/(X+Y+Z), y = Y/(X+Y+Z)，将颜色信息提取为仅与色调和饱和度相关的<strong>色品坐标 (x, y)</strong>，即可绘制 CIE 1931 色品图。</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -127,7 +151,7 @@ export default function ColorimetryPage() {
               ))}
             </div>
             <div className="p-3 bg-blue-500/5 rounded border border-blue-500/10 text-xs text-gray-400">
-              <strong className="text-blue-300">相关色温（CCT）：</strong>对于光谱不完全符合黑体辐射的光源（如 LED），使用"相关色温"描述其感知颜色。在普朗克轨迹附近，同一 CCT 值可能对应多个不同色品坐标（用同色异谱描述这种差异）。
+              <strong className="text-blue-300">相关色温（CCT）：</strong>对于光谱不完全符合黑体辐射的光源（如 LED），使用{'"相关色温"'}描述其感知颜色。在普朗克轨迹附近，同一 CCT 值可能对应多个不同色品坐标（用同色异谱描述这种差异）。
             </div>
           </div>
           <BlackbodySlider />

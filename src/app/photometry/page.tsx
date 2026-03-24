@@ -1,5 +1,5 @@
 import PhotometryVisualizer from "@/components/PhotometryVisualizer";
-import { Zap, Eye, Target, SquareMinus, BookOpen } from "lucide-react";
+import { Eye, BookOpen } from "lucide-react";
 
 export default function PhotometryPage() {
   return (
@@ -32,7 +32,7 @@ export default function PhotometryPage() {
             <Eye className="text-primary-400" size={32} />
             <h3 className="text-xl font-bold text-white">光度学（Photometry）</h3>
             <p className="text-gray-400 text-sm leading-relaxed">
-              在可见光范围内，用人眼的<strong>视觉灵敏度加权</strong>后的计量学科。相同物理功率的光，感知到的"亮度"因波长而不同。
+              在可见光范围内，用人眼的<strong>视觉灵敏度加权</strong>后的计量学科。相同物理功率的光，感知到的{'"亮度"'}因波长而不同。
             </p>
             <div className="p-3 bg-primary-500/5 rounded-lg font-mono text-xs space-y-1 text-primary-300">
               <p>光通量 → 流明（lm）</p>
@@ -86,7 +86,7 @@ export default function PhotometryPage() {
         <h2 className="text-3xl font-bold">立体角（Solid Angle）</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           <div className="space-y-4 text-sm text-gray-300">
-            <p>立体角是二维"平面角"概念在三维空间中的推广，用于描述三维空间中"方向的范围大小"。</p>
+            <p>立体角是二维{'"平面角"'}概念在三维空间中的推广，用于描述三维空间中{'"方向的范围大小"'}。</p>
             <div className="p-4 bg-accent-500/5 rounded-xl border border-accent-500/10 space-y-3">
               <div className="font-mono text-center p-2 bg-black/40 rounded text-accent-300">
                 Ω = A / r²  (球面度, sr)
