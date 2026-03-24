@@ -64,7 +64,7 @@ export function Chapter04CIE1931() {
     >
       <div className="space-y-4">
         <p>
-          1931 年，国际照明委员会（CIE, Commission Internationale de l'Éclairage）在剑桥召开的历史性会议上，
+          1931 年，国际照明委员会（CIE, Commission Internationale de l{' '}{'Éclairage'}）在剑桥召开的历史性会议上，
           基于 Wright 和 Guild 的颜色匹配实验数据，正式确立了<span className="text-primary-400 font-medium">CIE 1931 XYZ 色度系统</span>。
           这一系统至今仍是色度学的基石。
         </p>
@@ -77,7 +77,7 @@ export function Chapter04CIE1931() {
           <ul className="text-gray-300 text-sm space-y-2 mb-3">
             <li className="flex items-start gap-2">
               <span className="text-red-400">•</span>
-              <span>某些高饱和度颜色无法用正的 RGB 值表示，需要"负"原色</span>
+              <span>某些高饱和度颜色无法用正的 RGB 值表示，需要{'"负"'}原色</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-green-400">•</span>

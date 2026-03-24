@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Info } from 'lucide-react';
 import { MACADAM_ELLIPSES, SPECTRAL_LOCUS } from '@/lib/colorimetry/data';
@@ -17,8 +17,8 @@ export default function MacAdamEllipses() {
   const padding = { top: 40, right: 40, bottom: 60, left: 60 };
 
   // 色品图坐标映射 (xy -> SVG 坐标)
-  const mapX = (x: number) => padding.left + x * (svgWidth - padding.left - padding.right);
-  const mapY = (y: number) => svgHeight - padding.bottom - y * (svgHeight - padding.top - padding.bottom);
+  const mapX = useCallback((x: number) => padding.left + x * (svgWidth - padding.left - padding.right), [padding.left, padding.right, svgWidth]);
+  const mapY = useCallback((y: number) => svgHeight - padding.bottom - y * (svgHeight - padding.top - padding.bottom), [padding.top, padding.bottom, svgHeight]);
 
   // 生成光谱轨迹路径
   const spectralPath = useMemo(() => {
@@ -29,7 +29,6 @@ export default function MacAdamEllipses() {
     });
 
     // 闭合路径（连接到紫色线）
-    const purpleLineStart = SPECTRAL_LOCUS[0];
     const purpleLineEnd = SPECTRAL_LOCUS[SPECTRAL_LOCUS.length - 1];
 
     // 紫色线（连接 380nm 和 780nm 的直线）
@@ -80,7 +79,8 @@ export default function MacAdamEllipses() {
         index,
       };
     });
-  }, [mapX, mapY]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [mapX, mapY]); // padding 和 svg 尺寸已经通过 mapX/mapY 的 useCallback 间接包含
 
   // 生成光谱轨迹上的波长标签
   const wavelengthLabels = useMemo(() => {

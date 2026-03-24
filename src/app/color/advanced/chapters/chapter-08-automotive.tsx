@@ -165,7 +165,7 @@ export function Chapter08Automotive() {
           <h4 className="text-blue-400 font-bold mb-2">🎨 美学与品牌的颜色设计</h4>
           <p className="text-gray-300 text-sm leading-relaxed">
             除了法规要求，颜色也是品牌识别的重要元素。一些豪华品牌会定制独特的
-            LED 发光颜色，例如宝马的"天使眼"日间行车灯采用特定色温（约 5500K-6000K）
+            LED 发光颜色，例如宝马的{'"天使眼"'}日间行车灯采用特定色温（约 5500K-6000K）
             的白光，形成强烈的品牌识别度。尾灯的发光图案和颜色渐变也成为
             设计师表达品牌语言的工具。
           </p>

@@ -378,7 +378,6 @@ export function calculateDeltaE00(
     Deltah_prime = 0;
   } else {
     const h_diff = h2_prime - h1_prime;
-    const h_sum = h1_prime + h2_prime;
 
     if (Math.abs(h_diff) <= 180) {
       Deltah_prime = h_diff;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 // CIE 1931 2-degree standard observer spectral locus data (from reference implementation)
 const SPECTRAL_LOCUS: [number, number, number][] = [
@@ -121,19 +121,6 @@ const SRGB_RED = { x: 0.64, y: 0.33 };
 const SRGB_GREEN = { x: 0.30, y: 0.60 };
 const SRGB_BLUE = { x: 0.15, y: 0.06 };
 
-// Check if point is inside triangle (barycentric method)
-function pointInTriangle(px: number, py: number, p1: {x: number, y: number}, p2: {x: number, y: number}, p3: {x: number, y: number}): boolean {
-  const area = 0.5 * (-p2.y * p3.x + p1.y * (-p2.x + p3.x) + p1.x * (p2.y - p3.y) + p2.x * p3.y);
-  const s = 1 / (2 * area) * (p1.y * p3.x - p1.x * p3.y + (p3.y - p1.y) * px + (p1.x - p3.x) * py);
-  const t = 1 / (2 * area) * (p1.x * p2.y - p1.y * p2.x + (p1.y - p2.y) * px + (p2.x - p1.x) * py);
-  return s >= 0 && t >= 0 && 1 - s - t >= 0;
-}
-
-// Check if point is inside sRGB gamut triangle
-function inSRGBGamut(x: number, y: number): boolean {
-  return pointInTriangle(x, y, SRGB_RED, SRGB_GREEN, SRGB_BLUE);
-}
-
 // Check if point is inside the spectral locus
 function isInsideLocus(x: number, y: number, locus: [number, number, number][]): boolean {
   let inside = false;
@@ -211,55 +198,55 @@ function cieToCanvas(cx: number, cy: number): [number, number] {
   return [px, py];
 }
 
-export default function CIE1931Explorer() {
-  const [point, setPoint] = useState({ x: 0.3127, y: 0.3290, label: "D65 白光" });
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+// Generate the CIE gamut image (用于初始化)
+function generateCIEGamutImage(): string | null {
+  const canvas = document.createElement("canvas");
+  canvas.width = CANVAS_W;
+  canvas.height = CANVAS_H;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
 
-  // Generate the CIE gamut image
-  useEffect(() => {
-    const canvas = document.createElement("canvas");
-    canvas.width = CANVAS_W;
-    canvas.height = CANVAS_H;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+  // Light gray background
+  ctx.fillStyle = "#e8e8e8";
+  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
-    // Light gray background
-    ctx.fillStyle = "#e8e8e8";
-    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+  const imageData = ctx.createImageData(CANVAS_W, CANVAS_H);
+  const data = imageData.data;
 
-    const imageData = ctx.createImageData(CANVAS_W, CANVAS_H);
-    const data = imageData.data;
+  const plotLeft = PAD;
+  const plotRight = CANVAS_W - PAD;
+  const plotTop = PAD;
+  const plotBottom = CANVAS_H - PAD;
+  const plotWidth = plotRight - plotLeft;
+  const plotHeight = plotBottom - plotTop;
 
-    const plotLeft = PAD;
-    const plotRight = CANVAS_W - PAD;
-    const plotTop = PAD;
-    const plotBottom = CANVAS_H - PAD;
-    const plotWidth = plotRight - plotLeft;
-    const plotHeight = plotBottom - plotTop;
+  for (let py = 0; py < CANVAS_H; py++) {
+    for (let px = 0; px < CANVAS_W; px++) {
+      const idx = (py * CANVAS_W + px) * 4;
 
-    for (let py = 0; py < CANVAS_H; py++) {
-      for (let px = 0; px < CANVAS_W; px++) {
-        const idx = (py * CANVAS_W + px) * 4;
+      if (px >= plotLeft && px < plotRight && py >= plotTop && py < plotBottom) {
+        const cx = X_MIN + ((px - plotLeft) / plotWidth) * (X_MAX - X_MIN);
+        const cy = Y_MAX - ((py - plotTop) / plotHeight) * (Y_MAX - Y_MIN);
 
-        if (px >= plotLeft && px < plotRight && py >= plotTop && py < plotBottom) {
-          const cx = X_MIN + ((px - plotLeft) / plotWidth) * (X_MAX - X_MIN);
-          const cy = Y_MAX - ((py - plotTop) / plotHeight) * (Y_MAX - Y_MIN);
+        if (isInsideLocus(cx, cy, SPECTRAL_LOCUS)) {
+          const [r, g, b] = xyToApproxRgb(cx, cy);
 
-          if (isInsideLocus(cx, cy, SPECTRAL_LOCUS)) {
-            const [r, g, b] = xyToApproxRgb(cx, cy);
-
-            data[idx] = Math.round(r * 255);
-            data[idx + 1] = Math.round(g * 255);
-            data[idx + 2] = Math.round(b * 255);
-            data[idx + 3] = 255;
-          }
+          data[idx] = Math.round(r * 255);
+          data[idx + 1] = Math.round(g * 255);
+          data[idx + 2] = Math.round(b * 255);
+          data[idx + 3] = 255;
         }
       }
     }
+  }
 
-    ctx.putImageData(imageData, 0, 0);
-    setImageUrl(canvas.toDataURL());
-  }, []);
+  ctx.putImageData(imageData, 0, 0);
+  return canvas.toDataURL();
+}
+
+export default function CIE1931Explorer() {
+  const [point, setPoint] = useState({ x: 0.3127, y: 0.3290, label: "D65 白光" });
+  const imageUrl = useState<string | null>(() => generateCIEGamutImage())[0];
 
   const handleSVGClick = (e: React.MouseEvent<SVGSVGElement>) => {
     const svg = e.currentTarget;

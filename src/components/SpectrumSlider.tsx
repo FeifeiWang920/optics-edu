@@ -23,7 +23,7 @@ export default function SpectrumSlider() {
       </div>
       
       <div className="relative h-24 flex w-full rounded-2xl overflow-hidden border border-white/10 shadow-lg">
-        {colors.map((c, i) => (
+        {colors.map((c) => (
           <motion.div
             key={c.name}
             className={`flex-grow relative group cursor-pointer bg-gradient-to-b ${c.color}`}

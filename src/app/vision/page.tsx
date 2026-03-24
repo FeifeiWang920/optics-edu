@@ -105,7 +105,7 @@ export default function VisionPage() {
                 <li>响应速度快，适合辨识快速运动目标</li>
               </ul>
               <div className="p-2 bg-yellow-500/5 rounded border border-yellow-500/10 text-[11px] text-gray-400 italic">
-                💡 车灯法规中的光色要求（例如转向灯"琥珀色"）就是基于锥状细胞的色觉制定的。
+                💡 车灯法规中的光色要求（例如转向灯{'"琥珀色"'}）就是基于锥状细胞的色觉制定的。
               </div>
             </div>
           </div>
@@ -161,7 +161,7 @@ export default function VisionPage() {
             <line x1="179.7" y1="10" x2="179.7" y2="130" stroke="#3b82f6" strokeWidth="1" strokeDasharray="3,3" opacity="0.4"/>
             <line x1="232.5" y1="10" x2="232.5" y2="130" stroke="#22c55e" strokeWidth="1" strokeDasharray="3,3" opacity="0.4"/>
           </svg>
-          <p className="text-[10px] text-gray-500 italic">明视觉（Photopic）在555nm黄绿光处达到峰值，暗视觉（Scotopic）峰值在507nm青绿光，这就是"蒲金野效应"（Purkinje Effect）</p>
+          <p className="text-[10px] text-gray-500 italic">明视觉（Photopic）在555nm黄绿光处达到峰值，暗视觉（Scotopic）峰值在507nm青绿光，这就是{'"蒲金野效应"'}（Purkinje Effect）</p>
         </div>
       </section>
 
@@ -171,10 +171,10 @@ export default function VisionPage() {
           <h2 className="text-3xl font-bold flex items-center gap-3"><Crosshair className="text-accent-500" /> 盲点 (Blind Spot)</h2>
           <div className="text-sm text-gray-300 leading-relaxed space-y-4">
             <p>
-              视网膜上有一个特殊区域——<strong>视盘</strong>——视神经和血管在此汇聚并穿出眼球。这个区域没有任何感光细胞，因此对应的视野区域存在一个我们看不到的"盲区"，称为<strong>盲点</strong>。
+              视网膜上有一个特殊区域——<strong>视盘</strong>——视神经和血管在此汇聚并穿出眼球。这个区域没有任何感光细胞，因此对应的视野区域存在一个我们看不到的{'"盲区"'}，称为<strong>盲点</strong>。
             </p>
             <p>
-              通常情况下我们感知不到盲点的存在，因为大脑会根据周围信息自动"补全"该区域的画面。右眼的盲点位于视野中心偏颞侧约 15° 处。
+              通常情况下我们感知不到盲点的存在，因为大脑会根据周围信息自动{'"补全"'}该区域的画面。右眼的盲点位于视野中心偏颞侧约 15° 处。
             </p>
             <div className="p-4 bg-red-500/5 rounded-xl border border-red-500/10">
               <p className="text-[11px] text-gray-400">
@@ -198,7 +198,7 @@ export default function VisionPage() {
             <div className="space-y-3">
               <div className="p-4 bg-yellow-500/5 rounded-xl border border-yellow-500/10 space-y-2">
                 <h4 className="font-bold text-yellow-400 text-xs uppercase tracking-widest">明适应（光适应）</h4>
-                <p className="text-xs text-gray-400">从暗处突然进入明亮环境，初期会感到"目眩"，随后约 <strong>1 分钟</strong>内重新适应。机制：视紫红质漂白速度快；瞳孔快速缩小。</p>
+                <p className="text-xs text-gray-400">从暗处突然进入明亮环境，初期会感到{'"目眩"'}，随后约 <strong>1 分钟</strong>内重新适应。机制：视紫红质漂白速度快；瞳孔快速缩小。</p>
               </div>
               <div className="p-4 bg-blue-500/5 rounded-xl border border-blue-500/10 space-y-2">
                 <h4 className="font-bold text-blue-400 text-xs uppercase tracking-widest">暗适应（暗视觉恢复）</h4>
@@ -207,7 +207,7 @@ export default function VisionPage() {
             </div>
             <div className="p-4 bg-red-500/5 rounded-xl border border-red-500/10 text-[11px] text-gray-400">
               <AlertTriangle size={12} className="inline mr-1 text-red-400" />
-              <strong className="text-red-400">工程意义：</strong>这就是为什么车灯法规严格限制<strong>眩光</strong>（Glare）——当对向车远光灯使你的眼睛进入"明适应"后，你对暗处目标的感知能力会骤降，这是极危险的驾驶盲区。
+              <strong className="text-red-400">工程意义：</strong>这就是为什么车灯法规严格限制<strong>眩光</strong>（Glare）——当对向车远光灯使你的眼睛进入{'"明适应"'}后，你对暗处目标的感知能力会骤降，这是极危险的驾驶盲区。
             </div>
           </div>
         </div>
@@ -227,10 +227,10 @@ export default function VisionPage() {
           <div className="space-y-3">
             <p className="text-gray-400">实际意义：</p>
             <ul className="text-xs text-gray-400 space-y-2 list-disc list-inside">
-              <li>亮度翻倍，人眼感觉<strong>不会</strong>觉得"亮了一倍"</li>
+              <li>亮度翻倍，人眼感觉<strong>不会</strong>觉得{'"亮了一倍"'}</li>
               <li>只有光通量增加约 <strong>26%</strong>（即 √2 倍），人眼才能察觉差异</li>
               <li>这是为什么灯具亮度测试需使用对数坐标系</li>
-              <li>光度法规中的"等级"通常按对数间隔设计</li>
+              <li>光度法规中的{'"等级"'}通常按对数间隔设计</li>
             </ul>
           </div>
         </div>

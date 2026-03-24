@@ -47,7 +47,7 @@ export function Chapter01Rainbow() {
           <h4 className="text-primary-400 font-bold mb-2">什么是可见光？</h4>
           <p className="text-gray-300 text-sm leading-relaxed">
             可见光是电磁波谱中极窄的一段，波长范围约为 <strong>380nm 到 780nm</strong>。
-            这段频谱恰好位于紫外线和红外线之间。人眼之所以能"看见"这段频谱，
+            这段频谱恰好位于紫外线和红外线之间。人眼之所以能{'"看见"'}这段频谱，
             是进化的结果——太阳辐射的峰值正好落在可见光范围内。
           </p>
         </div>

@@ -20,7 +20,19 @@ interface ChapterNavigationProps {
 
 export default function ChapterNavigation({ items, activeId, onNavigate }: ChapterNavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<string | undefined>(activeId);
+
+  // 监听滚动，更新当前激活的章节
+  const [activeSection, setActiveSection] = useState<string | undefined>(() => activeId);
+
+  // 同步外部 activeId 变化 - 使用 setTimeout 避免同步调用 setState
+  useEffect(() => {
+    if (activeId && activeId !== activeSection) {
+      const timeoutId = setTimeout(() => {
+        setActiveSection(activeId);
+      }, 0);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [activeId, activeSection]);
 
   // 监听滚动，更新当前激活的章节
   useEffect(() => {
@@ -31,7 +43,9 @@ export default function ChapterNavigation({ items, activeId, onNavigate }: Chapt
       for (let i = sections.length - 1; i >= 0; i--) {
         const section = sections[i];
         if (section && section.offsetTop <= scrollPosition) {
-          setActiveSection(items[i].id);
+          if (activeSection !== items[i].id) {
+            setActiveSection(items[i].id);
+          }
           break;
         }
       }
@@ -40,14 +54,29 @@ export default function ChapterNavigation({ items, activeId, onNavigate }: Chapt
     window.addEventListener("scroll", handleScroll);
     handleScroll(); // 初始化
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [items]);
+  }, [items, activeSection]);
 
-  // 同步外部 activeId 变化
+  // 监听滚动，更新当前激活的章节
   useEffect(() => {
-    if (activeId) {
-      setActiveSection(activeId);
-    }
-  }, [activeId]);
+    const handleScroll = () => {
+      const sections = items.map((item) => document.getElementById(item.id));
+      const scrollPosition = window.scrollY + 200;
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i];
+        if (section && section.offsetTop <= scrollPosition) {
+          if (activeSection !== items[i].id) {
+            setActiveSection(items[i].id);
+          }
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // 初始化
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [items, activeSection]);
 
   const handleNavigate = (id: string) => {
     const element = document.getElementById(id);
@@ -108,7 +137,7 @@ export default function ChapterNavigation({ items, activeId, onNavigate }: Chapt
 
                 {/* 章节列表 */}
                 <nav className="space-y-2">
-                  {items.map((item, index) => {
+                  {items.map((item) => {
                     const isActive = activeSection === item.id;
                     return (
                       <motion.button

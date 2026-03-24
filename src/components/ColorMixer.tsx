@@ -44,7 +44,7 @@ export default function ColorMixer() {
   );
 }
 
-function ColorSlider({ label, value, color, onChange }: { label: string, value: number, color: string, onChange: (v: number) => void }) {
+function ColorSlider({ label, value, onChange }: { label: string, value: number, onChange: (v: number) => void }) {
   return (
     <div className="space-y-1">
       <div className="flex justify-between text-[10px] font-mono text-gray-500">

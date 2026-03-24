@@ -270,19 +270,16 @@ function RGBSliders({ value, onChange }: RGBSlidersProps) {
   const b = Math.round(rgb.b * 255);
 
   const handleRChange = (newR: number) => {
-    const newRNorm = newR / 255;
     const newHex = `#${toHex(newR)}${toHex(g)}${toHex(b)}`;
     onChange(newHex);
   };
 
   const handleGChange = (newG: number) => {
-    const newGNorm = newG / 255;
     const newHex = `#${toHex(r)}${toHex(newG)}${toHex(b)}`;
     onChange(newHex);
   };
 
   const handleBChange = (newB: number) => {
-    const newBNorm = newB / 255;
     const newHex = `#${toHex(r)}${toHex(g)}${toHex(newB)}`;
     onChange(newHex);
   };

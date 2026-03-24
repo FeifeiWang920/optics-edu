@@ -6,7 +6,6 @@ import { STOCKMAN_SHARPE_LMS_10NM } from "@/lib/colorimetry/data";
 import {
   type ChartConfig,
   type CurveColor,
-  type CurveDataPoint,
   generateSmoothPath,
   generateAreaPath,
   createWavelengthToX,
@@ -312,7 +311,7 @@ export default function LMSSensitivityChart() {
 
       <div className="text-xs text-gray-500 space-y-1">
         <p>
-          <strong>数据来源：</strong>Stockman, A. & Sharpe, L.T. (2000). "The spectral sensitivities of the middle- and long-wavelength-sensitive cone photoreceptors." Vision Research, 40(13), 1711-1737.
+          <strong>数据来源：</strong>Stockman, A. & Sharpe, L.T. (2000). {'"The spectral sensitivities of the middle- and long-wavelength-sensitive cone photoreceptors."'} Vision Research, 40(13), 1711-1737.
         </p>
         <p>
           <strong>说明：</strong>L 视锥对长波（红色）敏感，峰值约 560nm；M 视锥对中波（绿色）敏感，峰值约 530nm；S 视锥对短波（蓝色）敏感，峰值约 420nm。

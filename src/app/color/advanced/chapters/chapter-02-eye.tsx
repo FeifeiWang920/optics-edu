@@ -91,8 +91,8 @@ export function Chapter02Eye() {
           <h4 className="text-blue-400 font-bold mb-2">👁️ 颜色感知的本质</h4>
           <p className="text-gray-300 text-sm leading-relaxed">
             颜色不是物理世界的固有属性，而是大脑对视网膜信号的<span className="italic">解释</span>。
-            当 L 视锥被强烈激发而 M、S 视锥激发较弱时，大脑"创造"出红色的感觉。
-            不同物种的视锥细胞类型和数量不同，因此它们"看到"的颜色世界也截然不同。
+            当 L 视锥被强烈激发而 M、S 视锥激发较弱时，大脑{'"创造"'}出红色的感觉。
+            不同物种的视锥细胞类型和数量不同，因此它们{'"看到"'}的颜色世界也截然不同。
           </p>
         </div>
 

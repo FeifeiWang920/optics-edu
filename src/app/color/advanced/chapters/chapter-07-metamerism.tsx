@@ -120,12 +120,12 @@ export function Chapter07Metamerism() {
           <h4 className="text-yellow-400 font-bold mb-2">💡 色适应（Chromatic Adaptation）</h4>
           <p className="text-gray-300 text-sm leading-relaxed mb-2">
             人眼具有惊人的自适应能力。在白炽灯（约 2800K）下看一张白纸，
-            尽管它实际上富含红色光谱，我们仍然感知为"白色"。这种现象称为
+            尽管它实际上富含红色光谱，我们仍然感知为{'"白色"'}。这种现象称为
             <span className="italic">色适应</span>。
           </p>
           <p className="text-gray-300 text-sm leading-relaxed">
             色适应的生理机制是视锥细胞的<span className="italic">增益调节</span>。
-            大脑会自动"校准"白色参考点，使我们能在不同光源下保持相对稳定的颜色感知。
+            大脑会自动{'"校准"'}白色参考点，使我们能在不同光源下保持相对稳定的颜色感知。
           </p>
         </div>
 

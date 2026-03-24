@@ -65,7 +65,7 @@ export function Chapter06DeltaE() {
               <li>• 蓝色区域的中性色修正</li>
             </ul>
             <div className="glass-panel p-3 rounded-lg font-mono text-xs mt-2">
-              <p>ΔE*00 = √[(ΔL'/kLSL)² + (ΔC'/kCSC)² + (ΔH'/kHSH)² + RT(ΔC'/kCSC)(ΔH'/kHSH)]</p>
+              <p>ΔE*00 = √[(ΔL{' '}{'/'}kLSL)² + (ΔC{' '}{'/'}kCSC)² + (ΔH{' '}{'/'}kHSH)² + RT(ΔC{' '}{'/'}kCSC)(ΔH{' '}{'/'}kHSH)]</p>
             </div>
           </div>
           <div>

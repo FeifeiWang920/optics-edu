@@ -1,7 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 const bands = [
   "bg-[#333]", "bg-[#444]", "bg-[#555]", "bg-[#666]", "bg-[#777]", "bg-[#888]", "bg-[#999]"
 ];

@@ -53,7 +53,7 @@ export function Chapter03Matching() {
               C = rR + gG + bB
             </div>
             <p className="text-gray-400 mt-2">
-              其中 r、g、b 称为三刺激值。某些高饱和度颜色可能需要"负"的原色值，
+              其中 r、g、b 称为三刺激值。某些高饱和度颜色可能需要{'"负"'}的原色值，
               这意味着需要将原色添加到待匹配色一侧才能实现匹配。
             </p>
           </div>
@@ -61,11 +61,11 @@ export function Chapter03Matching() {
       }
     >
       <div className="space-y-4">
-        <p>
-          1850 年代，德国物理学家赫尔曼·冯·赫尔姆霍兹通过系统的颜色匹配实验，
-          验证了托马斯·杨的三色视觉理论。实验装置被称为<span className="text-primary-400 font-medium">颜色匹配仪</span>，
-          受试者通过调节三种原色光的强度来匹配测试颜色。
-        </p>
+        <p className="text-gray-300 text-sm leading-relaxed">
+              1850 年代，德国物理学家赫尔曼·冯·赫尔姆霍兹通过系统的颜色匹配实验，
+              验证了托马斯·杨的三色视觉理论。实验装置被称为<span className="text-primary-400 font-medium">颜色匹配仪</span>，
+              受试者通过调节三种原色光的强度来匹配测试颜色。
+            </p>
 
         <div className="glass-card p-4 rounded-xl">
           <h4 className="text-primary-400 font-bold mb-2">实验原理</h4>
@@ -90,7 +90,7 @@ export function Chapter03Matching() {
           <p className="text-gray-300 text-sm leading-relaxed">
             实验中发现，对于某些高饱和度的光谱色，仅靠调节 R、G、B 的强度无法实现匹配。
             解决方法是将一种原色（通常是红色）<span className="italic">添加到测试色一侧</span>，
-            相当于使用"负"的该原色值。这一发现直接导致了 CIE XYZ 色度系统的建立。
+            相当于使用{'"负"'}的该原色值。这一发现直接导致了 CIE XYZ 色度系统的建立。
           </p>
         </div>
 
