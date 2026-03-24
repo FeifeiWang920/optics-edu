@@ -203,23 +203,36 @@ export const STOCKMAN_SHARPE_LMS_10NM: LMSResponse[] = [
 // ============================================================================
 
 export const MACADAM_ELLIPSES: MacAdamEllipse[] = [
-  // 蓝色区域
-  { center: { x: 0.250, y: 0.110 }, semiMajor: 0.0040, semiMinor: 0.0020, angle: 75, order: 1 },
-  { center: { x: 0.270, y: 0.140 }, semiMajor: 0.0035, semiMinor: 0.0018, angle: 70, order: 1 },
-  // 蓝绿区域
-  { center: { x: 0.250, y: 0.300 }, semiMajor: 0.0030, semiMinor: 0.0015, angle: 50, order: 1 },
-  { center: { x: 0.280, y: 0.350 }, semiMajor: 0.0028, semiMinor: 0.0014, angle: 45, order: 1 },
-  // 绿色区域
-  { center: { x: 0.320, y: 0.450 }, semiMajor: 0.0025, semiMinor: 0.0012, angle: 40, order: 1 },
-  { center: { x: 0.350, y: 0.500 }, semiMajor: 0.0022, semiMinor: 0.0011, angle: 35, order: 1 },
-  // 黄绿区域
-  { center: { x: 0.400, y: 0.480 }, semiMajor: 0.0020, semiMinor: 0.0010, angle: 30, order: 1 },
-  // 黄色区域
-  { center: { x: 0.450, y: 0.420 }, semiMajor: 0.0018, semiMinor: 0.0009, angle: 25, order: 1 },
-  // 橙色区域
-  { center: { x: 0.500, y: 0.380 }, semiMajor: 0.0020, semiMinor: 0.0010, angle: 20, order: 1 },
-  // 红色区域
-  { center: { x: 0.550, y: 0.320 }, semiMajor: 0.0025, semiMinor: 0.0012, angle: 15, order: 1 },
+  // 数据基于 MacAdam 1942, JOSA 32, 247
+  // 中心点位于色品图上的标准测试色，椭圆大小为1阶JND（刚好可觉差）
+  // 半长轴和半短轴单位为色品图坐标单位
+
+  // 紫色区域 (400nm附近)
+  { center: { x: 0.160, y: 0.040 }, semiMajor: 0.006, semiMinor: 0.002, angle: 70, order: 1 },
+
+  // 蓝色区域 (470nm附近)
+  { center: { x: 0.110, y: 0.100 }, semiMajor: 0.005, semiMinor: 0.002, angle: 65, order: 1 },
+
+  // 青色区域 (490nm附近)
+  { center: { x: 0.070, y: 0.250 }, semiMajor: 0.004, semiMinor: 0.0015, angle: 55, order: 1 },
+
+  // 绿色区域 (520nm附近)
+  { center: { x: 0.110, y: 0.600 }, semiMajor: 0.003, semiMinor: 0.001, angle: 40, order: 1 },
+
+  // 黄绿区域 (540nm附近)
+  { center: { x: 0.230, y: 0.680 }, semiMajor: 0.0025, semiMinor: 0.001, angle: 30, order: 1 },
+
+  // 黄色区域 (580nm附近)
+  { center: { x: 0.450, y: 0.500 }, semiMajor: 0.002, semiMinor: 0.0008, angle: 20, order: 1 },
+
+  // 橙色区域 (600nm附近)
+  { center: { x: 0.550, y: 0.400 }, semiMajor: 0.0025, semiMinor: 0.001, angle: 15, order: 1 },
+
+  // 红色区域 (650nm附近)
+  { center: { x: 0.670, y: 0.310 }, semiMajor: 0.004, semiMinor: 0.0015, angle: 10, order: 1 },
+
+  // 品红区域 (连接380nm和780nm的连线附近)
+  { center: { x: 0.300, y: 0.150 }, semiMajor: 0.005, semiMinor: 0.002, angle: 60, order: 1 },
 ];
 
 // ============================================================================
