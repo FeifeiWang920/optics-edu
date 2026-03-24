@@ -1,4 +1,4 @@
-import CIE1931Explorer from "@/components/CIE1931Explorer";
+import CIE1931Explorer from "@/lib/cie-1931";
 import ColorMixer from "@/components/ColorMixer";
 import BlackbodySlider from "@/components/BlackbodySlider";
 import { Palette, Layers, Box, Info, FlaskConical, SunMedium } from "lucide-react";

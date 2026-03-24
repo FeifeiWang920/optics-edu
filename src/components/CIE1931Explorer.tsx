@@ -164,23 +164,21 @@ function xyToApproxRgb(x: number, y: number): [number, number, number] {
   let g = -0.9692660 * X + 1.8760108 * Y + 0.0415560 * Z;
   let b = 0.0556434 * X - 0.2040259 * Y + 1.0572252 * Z;
 
-  // Handle out-of-gamut colors: normalize if any component exceeds [0, 1]
-  // This preserves hue while reducing saturation for unrepresentable colors
-  const maxComponent = Math.max(r, g, b);
-  const minComponent = Math.min(r, g, b);
+  // Handle out-of-gamut colors with improved algorithm
+  // First handle negative components (clip to 0) to preserve hue
+  r = Math.max(0, r);
+  g = Math.max(0, g);
+  b = Math.max(0, b);
 
-  if (maxComponent > 1.0 || minComponent < 0.0) {
-    // Calculate scaling factor to bring all components into [0, 1]
-    const scale = maxComponent > 1.0 ? 1.0 / maxComponent : 1.0;
+  // Then normalize positive values that exceed 1.0
+  // This preserves hue and creates smoother transitions at gamut boundaries
+  const maxComponent = Math.max(r, g, b);
+  if (maxComponent > 1.0) {
+    const scale = 1.0 / maxComponent;
     r *= scale;
     g *= scale;
     b *= scale;
   }
-
-  // Clip to [0, 1] range before gamma correction
-  r = Math.max(0, Math.min(1, r));
-  g = Math.max(0, Math.min(1, g));
-  b = Math.max(0, Math.min(1, b));
 
   // Apply sRGB gamma correction (EOTF) per IEC 61966-2-1
   const gammaCorrect = (c: number): number => {
@@ -353,6 +351,22 @@ export default function CIE1931Explorer() {
             return <line x1={px1} y1={py1} x2={px2} y2={py2} stroke="#8866aa" strokeWidth="1" strokeDasharray="4,2" opacity="0.8"/>;
           })()}
 
+          {/* sRGB gamut triangle - 显示色域边界 */}
+          {(() => {
+            const [redX, redY] = cieToCanvas(SRGB_RED.x, SRGB_RED.y);
+            const [greenX, greenY] = cieToCanvas(SRGB_GREEN.x, SRGB_GREEN.y);
+            const [blueX, blueY] = cieToCanvas(SRGB_BLUE.x, SRGB_BLUE.y);
+            return (
+              <g opacity="0.6">
+                <line x1={redX} y1={redY} x2={greenX} y2={greenY} stroke="#2ecc71" strokeWidth="1" strokeDasharray="2,2"/>
+                <line x1={greenX} y1={greenY} x2={blueX} y2={blueY} stroke="#2ecc71" strokeWidth="1" strokeDasharray="2,2"/>
+                <line x1={blueX} y1={blueY} x2={redX} y2={redY} stroke="#2ecc71" strokeWidth="1" strokeDasharray="2,2"/>
+                {/* sRGB 标签 */}
+                <text x={greenX + 8} y={greenY - 5} fill="#2ecc71" fontSize="8" fontWeight="bold">sRGB 色域</text>
+              </g>
+            );
+          })()}
+
           {/* Wavelength labels */}
           {[420, 460, 490, 520, 550, 580, 620, 700].map(nm => {
             const entry = SPECTRAL_LOCUS.find(([w]) => w === nm);
@@ -421,7 +435,18 @@ export default function CIE1931Explorer() {
           <div className="w-6 h-0.5 bg-gray-800 rounded"/>
           <span className="text-gray-400">普朗克轨迹（黑体辐射色温曲线）</span>
         </div>
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-0.5 border-2 border-green-400 border-dashed"/>
+          <span className="text-gray-400">sRGB 显示色域边界</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full border border-blue-400"/>
+          <span className="text-gray-400">可显示颜色 vs 超出色域颜色（需压缩）</span>
+        </div>
       </div>
+      <p className="text-xs text-gray-500 italic">
+        注：绿色区域的分界线是 sRGB 显示色域的边界。520nm 等高饱和度光谱色超出 sRGB 色域，被压缩到可显示范围内，这会在边界处产生视觉过渡。使用广色域显示器可显示更多颜色。
+      </p>
     </div>
   );
 }
