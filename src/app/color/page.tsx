@@ -1,7 +1,8 @@
+import Link from "next/link";
 import CIE1931Explorer from "@/lib/cie-1931";
 import ColorMixer from "@/components/ColorMixer";
 import BlackbodySlider from "@/components/BlackbodySlider";
-import { Palette, Layers, Box, Info, FlaskConical, SunMedium } from "lucide-react";
+import { Palette, Layers, Box, Info, FlaskConical, SunMedium, GraduationCap, ArrowRight } from "lucide-react";
 
 export default function ColorimetryPage() {
   return (
@@ -40,6 +41,29 @@ export default function ColorimetryPage() {
           <span className="px-3 py-1 bg-white/5 rounded-full">大脑处理</span>
           <span>→</span>
           <span className="px-3 py-1 bg-primary-500/20 border border-primary-500/30 rounded-full text-primary-300">颜色感知</span>
+        </div>
+      </section>
+
+      {/* Deep Learning Entry */}
+      <section className="glass-panel p-8 bg-gradient-to-r from-primary-500/10 to-secondary-500/10 border border-primary-500/20">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <GraduationCap className="text-primary-400" />
+              深入学习色度学
+            </h2>
+            <p className="text-gray-400 text-sm max-w-xl">
+              从费曼物理学讲义到CIE国际标准，系统学习色度学的完整知识体系。
+              包含8个章节，从入门到提高。
+            </p>
+          </div>
+          <Link
+            href="/color/advanced"
+            className="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-medium flex items-center gap-2 transition-colors shrink-0"
+          >
+            进入深度解析
+            <ArrowRight size={18} />
+          </Link>
         </div>
       </section>
 
