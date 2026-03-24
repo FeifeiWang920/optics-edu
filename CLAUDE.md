@@ -1,41 +1,41 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+本文件为 Claude Code (claude.ai/code) 在此仓库中工作时提供指导。
 
 @AGENTS.md
 
-## Project Overview
+## 项目概述
 
-**optics-edu** is an educational platform for automotive lighting optics fundamentals. It teaches optical engineering concepts relevant to headlight design, including vision science, light interactions, photometry, and colorimetry.
+**optics-edu** 是一个车灯光学基础知识教育平台，教授与车灯设计相关的光学工程概念，包括视觉科学、光的相互作用、光度学和色度学。
 
-## Commands
+## 开发命令
 
 ```bash
-npm run dev      # Start development server (http://localhost:3000)
-npm run build    # Build for production
-npm run start    # Start production server
-npm run lint     # Run ESLint
+npm run dev      # 启动开发服务器 (http://localhost:3000)
+npm run build    # 生产环境构建
+npm run start    # 启动生产服务器
+npm run lint     # 运行 ESLint 检查
 ```
 
-## Tech Stack
+## 技术栈
 
-- **Next.js 16** (App Router) with **React 19**
-- **TypeScript** with path alias `@/*` → `./src/*`
-- **Tailwind CSS 4** with custom theme (dark mode, glass effects)
-- **Framer Motion** for animations
-- **Lucide React** for icons
+- **Next.js 16** (App Router) + **React 19**
+- **TypeScript**，路径别名 `@/*` → `./src/*`
+- **Tailwind CSS 4**，自定义主题（暗色模式、毛玻璃效果）
+- **Framer Motion** 动画库
+- **Lucide React** 图标库
 
-## Architecture
+## 项目架构
 
 ```
 src/
-├── app/                    # Next.js App Router pages
-│   ├── page.tsx           # Home (课程介绍 + 可见光谱)
+├── app/                    # Next.js App Router 页面
+│   ├── page.tsx           # 首页（课程介绍 + 可见光谱）
 │   ├── vision/            # 人眼视觉与感知
-│   ├── interactions/      # 光的物理作用原理 (反射/折射/TIR/菲涅尔/散射/色散)
-│   ├── photometry/        # 光度学 (光通量/发光强度/照度/亮度)
-│   └── color/             # 色度学 (CIE 1931/色温/色差/同色异谱)
-└── components/            # Interactive visualization components
+│   ├── interactions/      # 光的物理作用原理（反射/折射/TIR/菲涅尔/散射/色散）
+│   ├── photometry/        # 光度学（光通量/发光强度/照度/亮度）
+│   └── color/             # 色度学（CIE 1931/色温/色差/同色异谱）
+└── components/            # 交互式可视化组件
     ├── SpectrumSlider.tsx       # 可见光谱滑块
     ├── BlindSpotTest.tsx        # 盲点测试交互
     ├── MachBandDemo.tsx         # 马赫带效应演示
@@ -46,17 +46,17 @@ src/
     └── ColorMixer.tsx           # 颜色混合器
 ```
 
-## Design Patterns
+## 设计模式
 
-- **Page components**: Server components by default, contain educational content + import interactive client components
-- **Interactive components**: Use `"use client"` directive, combine SVG + Framer Motion for physics visualizations
-- **Styling**: Use Tailwind utilities with custom classes defined in `globals.css`:
-  - `.glass-panel` - Frosted glass container with backdrop blur
-  - `.glass-card` - Interactive glass card with hover state
-  - `.text-gradient` - Gradient text effect (primary→secondary→accent)
-- **Colors**: Use theme variables like `text-primary-500`, `text-secondary-500`, `text-accent-500`
-- **Language**: All UI text in Chinese (中文)
+- **页面组件**：默认为服务端组件，包含教学内容，导入交互式客户端组件
+- **交互组件**：使用 `"use client"` 指令，结合 SVG + Framer Motion 实现物理可视化
+- **样式规范**：使用 Tailwind 工具类，配合 `globals.css` 中定义的自定义类：
+  - `.glass-panel` - 毛玻璃容器，带背景模糊
+  - `.glass-card` - 可交互毛玻璃卡片，带悬停状态
+  - `.text-gradient` - 渐变文字效果（primary→secondary→accent）
+- **颜色变量**：使用主题变量如 `text-primary-500`、`text-secondary-500`、`text-accent-500`
+- **语言**：所有界面文字使用中文
 
-## Next.js 16 Notes
+## Next.js 16 注意事项
 
-This project uses Next.js 16 which may have breaking changes from earlier versions. Check `node_modules/next/dist/docs/` for current API documentation when implementing features.
+本项目使用 Next.js 16，与早期版本相比可能有破坏性变更。实现功能时请查阅 `node_modules/next/dist/docs/` 中的最新 API 文档。
