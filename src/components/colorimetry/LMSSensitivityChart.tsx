@@ -3,9 +3,19 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { STOCKMAN_SHARPE_LMS_10NM } from "@/lib/colorimetry/data";
+import {
+  type ChartConfig,
+  type CurveColor,
+  type CurveDataPoint,
+  generateSmoothPath,
+  generateAreaPath,
+  createWavelengthToX,
+  createValueToY,
+  getPlotDimensions,
+} from "./utils";
 
 // 图表配置
-const CHART_CONFIG = {
+const CHART_CONFIG: ChartConfig = {
   width: 800,
   height: 400,
   paddingLeft: 60,
@@ -16,8 +26,22 @@ const CHART_CONFIG = {
   wavelengthMax: 780,
 };
 
-// LMS 数据归一化到 0-1 范围
-function normalizeLMSData(data: typeof STOCKMAN_SHARPE_LMS_10NM) {
+// 颜色配置
+const CURVE_COLORS: Record<"L" | "M" | "S", CurveColor> = {
+  L: { stroke: "#ef4444", fill: "#ef4444", label: "L 视锥 (长波)" },
+  M: { stroke: "#22c55e", fill: "#22c55e", label: "M 视锥 (中波)" },
+  S: { stroke: "#3b82f6", fill: "#3b82f6", label: "S 视锥 (短波)" },
+};
+
+/** LMS 数据归一化到 0-1 范围 */
+interface NormalizedLMSData {
+  wavelength: number;
+  l: number;
+  m: number;
+  s: number;
+}
+
+function normalizeLMSData(data: typeof STOCKMAN_SHARPE_LMS_10NM): NormalizedLMSData[] {
   const maxL = Math.max(...data.map((d) => d.l));
   const maxM = Math.max(...data.map((d) => d.m));
   const maxS = Math.max(...data.map((d) => d.s));
@@ -31,48 +55,12 @@ function normalizeLMSData(data: typeof STOCKMAN_SHARPE_LMS_10NM) {
   }));
 }
 
-// 坐标转换函数
-function wavelengthToX(wavelength: number): number {
-  const { wavelengthMin, wavelengthMax, paddingLeft, paddingRight, width } = CHART_CONFIG;
-  const plotWidth = width - paddingLeft - paddingRight;
-  return paddingLeft + ((wavelength - wavelengthMin) / (wavelengthMax - wavelengthMin)) * plotWidth;
-}
-
-function valueToY(value: number): number {
-  const { paddingTop, paddingBottom, height } = CHART_CONFIG;
-  const plotHeight = height - paddingTop - paddingBottom;
-  return paddingTop + (1 - value) * plotHeight;
-}
-
-// 生成平滑曲线路径
-function generateSmoothPath(
-  data: { wavelength: number; value: number }[],
-  xFn: (w: number) => number,
-  yFn: (v: number) => number,
-): string {
-  if (data.length === 0) return "";
-
-  const points = data.map((d) => [xFn(d.wavelength), yFn(d.value)] as [number, number]);
-  let path = `M ${points[0][0]} ${points[0][1]}`;
-
-  for (let i = 1; i < points.length; i++) {
-    const prev = points[i - 1];
-    const curr = points[i];
-    // 使用直线连接，因为数据点已经足够密集
-    path += ` L ${curr[0]} ${curr[1]}`;
-  }
-
-  return path;
-}
-
-// 颜色配置
-const CURVE_COLORS = {
-  L: { stroke: "#ef4444", fill: "#ef4444", label: "L 视锥 (长波)" },
-  M: { stroke: "#22c55e", fill: "#22c55e", label: "M 视锥 (中波)" },
-  S: { stroke: "#3b82f6", fill: "#3b82f6", label: "S 视锥 (短波)" },
-};
-
 export default function LMSSensitivityChart() {
+  // 创建坐标转换函数
+  const wavelengthToX = useMemo(() => createWavelengthToX(CHART_CONFIG), []);
+  const valueToY = useMemo(() => createValueToY(CHART_CONFIG, true), []);
+
+  // 归一化数据
   const normalizedData = useMemo(() => normalizeLMSData(STOCKMAN_SHARPE_LMS_10NM), []);
 
   // 准备曲线数据
@@ -92,35 +80,24 @@ export default function LMSSensitivityChart() {
   // 生成路径
   const lPath = useMemo(
     () => generateSmoothPath(lCurve, wavelengthToX, valueToY),
-    [lCurve],
+    [lCurve, wavelengthToX, valueToY],
   );
   const mPath = useMemo(
     () => generateSmoothPath(mCurve, wavelengthToX, valueToY),
-    [mCurve],
+    [mCurve, wavelengthToX, valueToY],
   );
   const sPath = useMemo(
     () => generateSmoothPath(sCurve, wavelengthToX, valueToY),
-    [sCurve],
+    [sCurve, wavelengthToX, valueToY],
   );
 
   // 生成填充区域路径
-  const lAreaPath = useMemo(() => {
-    const { paddingBottom, height } = CHART_CONFIG;
-    const baseY = height - paddingBottom;
-    return `${lPath} L ${wavelengthToX(700)} ${baseY} L ${wavelengthToX(380)} ${baseY} Z`;
-  }, [lPath]);
+  const lAreaPath = useMemo(() => generateAreaPath(lPath, CHART_CONFIG, 380, 700), [lPath]);
+  const mAreaPath = useMemo(() => generateAreaPath(mPath, CHART_CONFIG, 380, 700), [mPath]);
+  const sAreaPath = useMemo(() => generateAreaPath(sPath, CHART_CONFIG, 380, 700), [sPath]);
 
-  const mAreaPath = useMemo(() => {
-    const { paddingBottom, height } = CHART_CONFIG;
-    const baseY = height - paddingBottom;
-    return `${mPath} L ${wavelengthToX(700)} ${baseY} L ${wavelengthToX(380)} ${baseY} Z`;
-  }, [mPath]);
-
-  const sAreaPath = useMemo(() => {
-    const { paddingBottom, height } = CHART_CONFIG;
-    const baseY = height - paddingBottom;
-    return `${sPath} L ${wavelengthToX(700)} ${baseY} L ${wavelengthToX(380)} ${baseY} Z`;
-  }, [sPath]);
+  // 绘图区域尺寸
+  const plotDim = getPlotDimensions(CHART_CONFIG);
 
   // X 轴刻度
   const xTicks = [380, 420, 460, 500, 540, 580, 620, 660, 700, 740, 780];
@@ -148,15 +125,15 @@ export default function LMSSensitivityChart() {
       <div className="relative overflow-hidden rounded-xl border border-white/10 bg-gray-900/50">
         <svg
           viewBox={`0 0 ${CHART_CONFIG.width} ${CHART_CONFIG.height}`}
-          className="w-full"
+          className="w-full h-auto"
           xmlns="http://www.w3.org/2000/svg"
         >
           {/* 背景 */}
           <rect
-            x={CHART_CONFIG.paddingLeft}
-            y={CHART_CONFIG.paddingTop}
-            width={CHART_CONFIG.width - CHART_CONFIG.paddingLeft - CHART_CONFIG.paddingRight}
-            height={CHART_CONFIG.height - CHART_CONFIG.paddingTop - CHART_CONFIG.paddingBottom}
+            x={plotDim.left}
+            y={plotDim.top}
+            width={plotDim.width}
+            height={plotDim.height}
             fill="rgba(255,255,255,0.02)"
           />
 
@@ -164,15 +141,15 @@ export default function LMSSensitivityChart() {
           {gridLines.map(({ y, value }) => (
             <g key={`grid-${value}`}>
               <line
-                x1={CHART_CONFIG.paddingLeft}
+                x1={plotDim.left}
                 y1={y}
-                x2={CHART_CONFIG.width - CHART_CONFIG.paddingRight}
+                x2={plotDim.right}
                 y2={y}
                 stroke="rgba(255,255,255,0.1)"
                 strokeWidth="1"
               />
               <text
-                x={CHART_CONFIG.paddingLeft - 10}
+                x={plotDim.left - 10}
                 y={y + 4}
                 textAnchor="end"
                 fill="#9ca3af"
@@ -185,20 +162,20 @@ export default function LMSSensitivityChart() {
 
           {/* Y 轴 */}
           <line
-            x1={CHART_CONFIG.paddingLeft}
-            y1={CHART_CONFIG.paddingTop}
-            x2={CHART_CONFIG.paddingLeft}
-            y2={CHART_CONFIG.height - CHART_CONFIG.paddingBottom}
+            x1={plotDim.left}
+            y1={plotDim.top}
+            x2={plotDim.left}
+            y2={plotDim.bottom}
             stroke="rgba(255,255,255,0.3)"
             strokeWidth="1.5"
           />
 
           {/* X 轴 */}
           <line
-            x1={CHART_CONFIG.paddingLeft}
-            y1={CHART_CONFIG.height - CHART_CONFIG.paddingBottom}
-            x2={CHART_CONFIG.width - CHART_CONFIG.paddingRight}
-            y2={CHART_CONFIG.height - CHART_CONFIG.paddingBottom}
+            x1={plotDim.left}
+            y1={plotDim.bottom}
+            x2={plotDim.right}
+            y2={plotDim.bottom}
             stroke="rgba(255,255,255,0.3)"
             strokeWidth="1.5"
           />
@@ -208,15 +185,15 @@ export default function LMSSensitivityChart() {
             <g key={`xtick-${tick}`}>
               <line
                 x1={wavelengthToX(tick)}
-                y1={CHART_CONFIG.height - CHART_CONFIG.paddingBottom}
+                y1={plotDim.bottom}
                 x2={wavelengthToX(tick)}
-                y2={CHART_CONFIG.height - CHART_CONFIG.paddingBottom + 5}
+                y2={plotDim.bottom + 5}
                 stroke="rgba(255,255,255,0.3)"
                 strokeWidth="1"
               />
               <text
                 x={wavelengthToX(tick)}
-                y={CHART_CONFIG.height - CHART_CONFIG.paddingBottom + 20}
+                y={plotDim.bottom + 20}
                 textAnchor="middle"
                 fill="#9ca3af"
                 fontSize="11"
@@ -251,10 +228,10 @@ export default function LMSSensitivityChart() {
           <defs>
             <clipPath id="chartArea">
               <rect
-                x={CHART_CONFIG.paddingLeft}
-                y={CHART_CONFIG.paddingTop}
-                width={CHART_CONFIG.width - CHART_CONFIG.paddingLeft - CHART_CONFIG.paddingRight}
-                height={CHART_CONFIG.height - CHART_CONFIG.paddingTop - CHART_CONFIG.paddingBottom}
+                x={plotDim.left}
+                y={plotDim.top}
+                width={plotDim.width}
+                height={plotDim.height}
               />
             </clipPath>
           </defs>

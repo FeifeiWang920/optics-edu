@@ -3,9 +3,18 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { CIE_1931_CMF_10NM } from "@/lib/colorimetry/data";
+import {
+  type ChartConfig,
+  type CurveColor,
+  generateSmoothPath,
+  generateAreaPath,
+  createWavelengthToX,
+  createValueToY,
+  getPlotDimensions,
+} from "./utils";
 
 // 图表配置
-const CHART_CONFIG = {
+const CHART_CONFIG: ChartConfig = {
   width: 800,
   height: 450,
   paddingLeft: 70,
@@ -17,48 +26,18 @@ const CHART_CONFIG = {
   yMax: 1.1, // Y 轴最大值（略大于 1 以容纳 x̄ 的峰值）
 };
 
-// 坐标转换函数
-function wavelengthToX(wavelength: number): number {
-  const { wavelengthMin, wavelengthMax, paddingLeft, paddingRight, width } = CHART_CONFIG;
-  const plotWidth = width - paddingLeft - paddingRight;
-  return paddingLeft + ((wavelength - wavelengthMin) / (wavelengthMax - wavelengthMin)) * plotWidth;
-}
-
-function valueToY(value: number): number {
-  const { paddingTop, paddingBottom, height, yMax } = CHART_CONFIG;
-  const plotHeight = height - paddingTop - paddingBottom;
-  return paddingTop + (1 - value / yMax) * plotHeight;
-}
-
-// 生成平滑曲线路径
-function generateSmoothPath(
-  data: { wavelength: number; value: number }[],
-  xFn: (w: number) => number,
-  yFn: (v: number) => number,
-): string {
-  if (data.length === 0) return "";
-
-  const points = data.map((d) => [xFn(d.wavelength), yFn(d.value)] as [number, number]);
-  let path = `M ${points[0][0]} ${points[0][1]}`;
-
-  for (let i = 1; i < points.length; i++) {
-    const prev = points[i - 1];
-    const curr = points[i];
-    // 使用直线连接，因为数据点已经足够密集
-    path += ` L ${curr[0]} ${curr[1]}`;
-  }
-
-  return path;
-}
-
 // 颜色配置
-const CURVE_COLORS = {
+const CURVE_COLORS: Record<"x" | "y" | "z", CurveColor> = {
   x: { stroke: "#ef4444", fill: "#ef4444", label: "x̄(λ)", description: "X 色匹配函数" },
   y: { stroke: "#22c55e", fill: "#22c55e", label: "ȳ(λ)", description: "Y 色匹配函数" },
   z: { stroke: "#3b82f6", fill: "#3b82f6", label: "z̄(λ)", description: "Z 色匹配函数" },
 };
 
 export default function ColorMatchingCurves() {
+  // 创建坐标转换函数
+  const wavelengthToX = useMemo(() => createWavelengthToX(CHART_CONFIG), []);
+  const valueToY = useMemo(() => createValueToY(CHART_CONFIG), []);
+
   // 准备曲线数据
   const xCurve = useMemo(
     () => CIE_1931_CMF_10NM.map((d) => ({ wavelength: d.wavelength, value: d.xbar })),
@@ -76,35 +55,24 @@ export default function ColorMatchingCurves() {
   // 生成路径
   const xPath = useMemo(
     () => generateSmoothPath(xCurve, wavelengthToX, valueToY),
-    [xCurve],
+    [xCurve, wavelengthToX, valueToY],
   );
   const yPath = useMemo(
     () => generateSmoothPath(yCurve, wavelengthToX, valueToY),
-    [yCurve],
+    [yCurve, wavelengthToX, valueToY],
   );
   const zPath = useMemo(
     () => generateSmoothPath(zCurve, wavelengthToX, valueToY),
-    [zCurve],
+    [zCurve, wavelengthToX, valueToY],
   );
 
   // 生成填充区域路径
-  const xAreaPath = useMemo(() => {
-    const { paddingBottom, height } = CHART_CONFIG;
-    const baseY = height - paddingBottom;
-    return `${xPath} L ${wavelengthToX(780)} ${baseY} L ${wavelengthToX(380)} ${baseY} Z`;
-  }, [xPath]);
+  const xAreaPath = useMemo(() => generateAreaPath(xPath, CHART_CONFIG), [xPath]);
+  const yAreaPath = useMemo(() => generateAreaPath(yPath, CHART_CONFIG), [yPath]);
+  const zAreaPath = useMemo(() => generateAreaPath(zPath, CHART_CONFIG), [zPath]);
 
-  const yAreaPath = useMemo(() => {
-    const { paddingBottom, height } = CHART_CONFIG;
-    const baseY = height - paddingBottom;
-    return `${yPath} L ${wavelengthToX(780)} ${baseY} L ${wavelengthToX(380)} ${baseY} Z`;
-  }, [yPath]);
-
-  const zAreaPath = useMemo(() => {
-    const { paddingBottom, height } = CHART_CONFIG;
-    const baseY = height - paddingBottom;
-    return `${zPath} L ${wavelengthToX(780)} ${baseY} L ${wavelengthToX(380)} ${baseY} Z`;
-  }, [zPath]);
+  // 绘图区域尺寸
+  const plotDim = getPlotDimensions(CHART_CONFIG);
 
   // X 轴刻度
   const xTicks = [380, 420, 460, 500, 540, 580, 620, 660, 700, 740, 780];
@@ -117,13 +85,6 @@ export default function ColorMatchingCurves() {
     y: valueToY(tick),
     value: tick,
   }));
-
-  // 特殊波长标记（峰值位置）
-  const peakMarkers = [
-    { wavelength: 590, value: 1.0263, label: "x̄ 峰值", curve: "x" },
-    { wavelength: 555, description: "ȳ 峰值 (光度函数)", curve: "y" },
-    { wavelength: 440, description: "z̄ 峰值", curve: "z" },
-  ];
 
   return (
     <div className="glass-panel p-6 space-y-4">
@@ -139,15 +100,15 @@ export default function ColorMatchingCurves() {
       <div className="relative overflow-hidden rounded-xl border border-white/10 bg-gray-900/50">
         <svg
           viewBox={`0 0 ${CHART_CONFIG.width} ${CHART_CONFIG.height}`}
-          className="w-full"
+          className="w-full h-auto"
           xmlns="http://www.w3.org/2000/svg"
         >
           {/* 背景 */}
           <rect
-            x={CHART_CONFIG.paddingLeft}
-            y={CHART_CONFIG.paddingTop}
-            width={CHART_CONFIG.width - CHART_CONFIG.paddingLeft - CHART_CONFIG.paddingRight}
-            height={CHART_CONFIG.height - CHART_CONFIG.paddingTop - CHART_CONFIG.paddingBottom}
+            x={plotDim.left}
+            y={plotDim.top}
+            width={plotDim.width}
+            height={plotDim.height}
             fill="rgba(255,255,255,0.02)"
           />
 
@@ -155,15 +116,15 @@ export default function ColorMatchingCurves() {
           {gridLines.map(({ y, value }) => (
             <g key={`grid-${value}`}>
               <line
-                x1={CHART_CONFIG.paddingLeft}
+                x1={plotDim.left}
                 y1={y}
-                x2={CHART_CONFIG.width - CHART_CONFIG.paddingRight}
+                x2={plotDim.right}
                 y2={y}
                 stroke="rgba(255,255,255,0.1)"
                 strokeWidth="1"
               />
               <text
-                x={CHART_CONFIG.paddingLeft - 10}
+                x={plotDim.left - 10}
                 y={y + 4}
                 textAnchor="end"
                 fill="#9ca3af"
@@ -176,20 +137,20 @@ export default function ColorMatchingCurves() {
 
           {/* Y 轴 */}
           <line
-            x1={CHART_CONFIG.paddingLeft}
-            y1={CHART_CONFIG.paddingTop}
-            x2={CHART_CONFIG.paddingLeft}
-            y2={CHART_CONFIG.height - CHART_CONFIG.paddingBottom}
+            x1={plotDim.left}
+            y1={plotDim.top}
+            x2={plotDim.left}
+            y2={plotDim.bottom}
             stroke="rgba(255,255,255,0.3)"
             strokeWidth="1.5"
           />
 
           {/* X 轴 */}
           <line
-            x1={CHART_CONFIG.paddingLeft}
-            y1={CHART_CONFIG.height - CHART_CONFIG.paddingBottom}
-            x2={CHART_CONFIG.width - CHART_CONFIG.paddingRight}
-            y2={CHART_CONFIG.height - CHART_CONFIG.paddingBottom}
+            x1={plotDim.left}
+            y1={plotDim.bottom}
+            x2={plotDim.right}
+            y2={plotDim.bottom}
             stroke="rgba(255,255,255,0.3)"
             strokeWidth="1.5"
           />
@@ -199,15 +160,15 @@ export default function ColorMatchingCurves() {
             <g key={`xtick-${tick}`}>
               <line
                 x1={wavelengthToX(tick)}
-                y1={CHART_CONFIG.height - CHART_CONFIG.paddingBottom}
+                y1={plotDim.bottom}
                 x2={wavelengthToX(tick)}
-                y2={CHART_CONFIG.height - CHART_CONFIG.paddingBottom + 5}
+                y2={plotDim.bottom + 5}
                 stroke="rgba(255,255,255,0.3)"
                 strokeWidth="1"
               />
               <text
                 x={wavelengthToX(tick)}
-                y={CHART_CONFIG.height - CHART_CONFIG.paddingBottom + 20}
+                y={plotDim.bottom + 20}
                 textAnchor="middle"
                 fill="#9ca3af"
                 fontSize="11"
@@ -242,10 +203,10 @@ export default function ColorMatchingCurves() {
           <defs>
             <clipPath id="chartArea">
               <rect
-                x={CHART_CONFIG.paddingLeft}
-                y={CHART_CONFIG.paddingTop}
-                width={CHART_CONFIG.width - CHART_CONFIG.paddingLeft - CHART_CONFIG.paddingRight}
-                height={CHART_CONFIG.height - CHART_CONFIG.paddingTop - CHART_CONFIG.paddingBottom}
+                x={plotDim.left}
+                y={plotDim.top}
+                width={plotDim.width}
+                height={plotDim.height}
               />
             </clipPath>
           </defs>
@@ -308,7 +269,7 @@ export default function ColorMatchingCurves() {
 
           {/* 峰值标记 */}
           <g>
-            {/* ȳ 峰值 ~555nm */}
+            {/* ȳ 峰值 */}
             <circle
               cx={wavelengthToX(555)}
               cy={valueToY(0.995)}
@@ -327,7 +288,7 @@ export default function ColorMatchingCurves() {
               555nm
             </text>
 
-            {/* x̄ 峰值 ~590nm */}
+            {/* x̄ 峰值 */}
             <circle
               cx={wavelengthToX(590)}
               cy={valueToY(1.0263)}
@@ -346,7 +307,7 @@ export default function ColorMatchingCurves() {
               590nm
             </text>
 
-            {/* z̄ 峰值 ~440nm */}
+            {/* z̄ 峰值 */}
             <circle
               cx={wavelengthToX(440)}
               cy={valueToY(1.7471)}
