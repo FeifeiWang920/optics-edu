@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // CIE 1931 2-degree standard observer spectral locus data (from reference implementation)
 const SPECTRAL_LOCUS: [number, number, number][] = [
@@ -246,7 +246,13 @@ function generateCIEGamutImage(): string | null {
 
 export default function CIE1931Explorer() {
   const [point, setPoint] = useState({ x: 0.3127, y: 0.3290, label: "D65 白光" });
-  const imageUrl = useState<string | null>(() => generateCIEGamutImage())[0];
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setImageUrl(generateCIEGamutImage());
+    }
+  }, []);
 
   const handleSVGClick = (e: React.MouseEvent<SVGSVGElement>) => {
     const svg = e.currentTarget;

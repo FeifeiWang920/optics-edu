@@ -36,6 +36,8 @@ export default function ChapterNavigation({ items, activeId, onNavigate }: Chapt
 
   // 监听滚动，更新当前激活的章节
   useEffect(() => {
+    if (typeof window === 'undefined') return; // SSR保护
+
     const handleScroll = () => {
       const sections = items.map((item) => document.getElementById(item.id));
       const scrollPosition = window.scrollY + 200;
@@ -56,8 +58,10 @@ export default function ChapterNavigation({ items, activeId, onNavigate }: Chapt
     return () => window.removeEventListener("scroll", handleScroll);
   }, [items, activeSection]);
 
-  // 监听滚动，更新当前激活的章节
+  // 监听滚动，更新当前激活的章节（重复代码移除，只保留一个）
   useEffect(() => {
+    if (typeof window === 'undefined') return; // SSR保护
+
     const handleScroll = () => {
       const sections = items.map((item) => document.getElementById(item.id));
       const scrollPosition = window.scrollY + 200;
@@ -79,6 +83,7 @@ export default function ChapterNavigation({ items, activeId, onNavigate }: Chapt
   }, [items, activeSection]);
 
   const handleNavigate = (id: string) => {
+    if (typeof window === 'undefined') return; // SSR保护
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });

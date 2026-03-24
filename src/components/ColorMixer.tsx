@@ -28,9 +28,9 @@ export default function ColorMixer() {
       </div>
 
       <div className="space-y-4">
-        <ColorSlider label="R (Red)" value={rgb.r} color="bg-red-500" onChange={(v) => setRgb({ ...rgb, r: v })} />
-        <ColorSlider label="G (Green)" value={rgb.g} color="bg-green-500" onChange={(v) => setRgb({ ...rgb, g: v })} />
-        <ColorSlider label="B (Blue)" value={rgb.b} color="bg-blue-500" onChange={(v) => setRgb({ ...rgb, b: v })} />
+        <ColorSlider label="R (Red)" value={rgb.r} onChange={(v) => setRgb({ ...rgb, r: v })} />
+        <ColorSlider label="G (Green)" value={rgb.g} onChange={(v) => setRgb({ ...rgb, g: v })} />
+        <ColorSlider label="B (Blue)" value={rgb.b} onChange={(v) => setRgb({ ...rgb, b: v })} />
       </div>
 
       <div className="p-4 bg-white/5 rounded-xl border border-white/5 text-center">
