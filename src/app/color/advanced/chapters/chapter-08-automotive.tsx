@@ -1,5 +1,4 @@
 import ChapterCard from "@/components/chapter/ChapterCard";
-import CIE1931Explorer from "@/components/CIE1931Explorer";
 
 export function Chapter08Automotive() {
   return (
@@ -10,7 +9,7 @@ export function Chapter08Automotive() {
       cieRef="ECE R48 / FMVSS 108"
       difficulty="intermediate"
       estimatedTime={10}
-      interactive={<CIE1931Explorer />}
+      interactive={null}
       mathDetail={
         <div className="space-y-4 text-sm">
           <div>
@@ -53,6 +52,19 @@ export function Chapter08Automotive() {
           色度学理论在车灯设计中有着直接而重要的应用。从法规符合性到美学设计，
           从质量控制到人因工程，颜色科学贯穿整个汽车照明系统的开发流程。
         </p>
+
+        <div className="glass-card p-4 rounded-xl">
+          <h4 className="text-primary-400 font-bold mb-2">📐 色品图在车灯设计中的作用</h4>
+          <p className="text-gray-300 text-sm leading-relaxed mb-3">
+            CIE 1931 色品图是验证车灯颜色合规性的核心工具：
+          </p>
+          <ul className="text-gray-300 text-sm space-y-2 list-disc list-inside">
+            <li>法规定义的信号色区域边界直接在色品图中标注</li>
+            <li>测量获得的色品坐标可直接对照边界进行验证</li>
+            <li>帮助设计人员理解颜色容差和批次差异</li>
+            <li>支持供应链中的颜色质量沟通</li>
+          </ul>
+        </div>
 
         <div className="glass-card p-4 rounded-xl border-l-4 border-l-red-500">
           <h4 className="text-red-400 font-bold mb-2">🔴 法规要求的颜色区域</h4>
@@ -172,15 +184,15 @@ export function Chapter08Automotive() {
         </div>
 
         <div className="glass-card p-4 rounded-xl">
-          <h4 className="text-primary-400 font-bold mb-2">📊 使用色品图进行合规验证</h4>
+          <h4 className="text-primary-400 font-bold mb-2">📊 合规验证方法</h4>
           <p className="text-gray-300 text-sm leading-relaxed mb-3">
-            上方的 CIE 1931 探索器可用于验证车灯颜色是否符合法规：
+            车灯颜色合规验证的标准流程：
           </p>
           <ol className="text-gray-300 text-sm space-y-2 list-decimal list-inside">
             <li>使用色度计测量样品的 xy 坐标</li>
-            <li>在色品图上标记该点位置</li>
-            <li>检查是否落在法规定义的边界内</li>
+            <li>对照法规定义的边界进行检查</li>
             <li>考虑测量不确定度，留出安全余量</li>
+            <li>记录测试结果用于质量追溯</li>
           </ol>
         </div>
 

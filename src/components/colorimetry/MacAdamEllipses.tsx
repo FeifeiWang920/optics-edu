@@ -66,8 +66,8 @@ export default function MacAdamEllipses() {
   // 生成光谱轨迹路径
   const spectralPath = useMemo(() => {
     const points = SPECTRAL_LOCUS.map((point, i) => {
-      const x = mapX(point.x);
-      const y = mapY(point.y);
+      const x = mapX(point[1]);
+      const y = mapY(point[2]);
       return `${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
     });
 
@@ -89,24 +89,30 @@ export default function MacAdamEllipses() {
       const yScale = plotHeight / (config.yMax - config.yMin);
 
       // 放大椭圆以便观察
-      const a = ellipse.semiMajor * xScale * zoomLevel;
-      const b = ellipse.semiMinor * yScale * zoomLevel;
-      const theta = (ellipse.angle * Math.PI) / 180;
+      // 在 SVG 中，y 轴向下，所以旋转角度需要取负来保持相同的视觉方向
+      const scaleA = ellipse.semiMajor * xScale * zoomLevel;
+      const scaleB = ellipse.semiMinor * yScale * zoomLevel;
 
-      // 使用参数方程生成椭圆路径
+      // 角度转弧度（取负以补偿 SVG y 轴向下的影响）
+      const phi = -(ellipse.angle * Math.PI) / 180;
+
+      // 使用参数方程生成椭圆路径（与 Python 代码公式一致）
+      // xe = x0 + a*cos(t)*cos(phi) - b*sin(t)*sin(phi)
+      // ye = y0 + a*cos(t)*sin(phi) + b*sin(t)*cos(phi)
       const points: string[] = [];
       const numPoints = 64;
 
       for (let i = 0; i <= numPoints; i++) {
         const t = (i / numPoints) * 2 * Math.PI;
 
-        // 未旋转的椭圆坐标
-        const x = a * Math.cos(t);
-        const y = b * Math.sin(t);
+        const cosT = Math.cos(t);
+        const sinT = Math.sin(t);
+        const cosPhi = Math.cos(phi);
+        const sinPhi = Math.sin(phi);
 
-        // 旋转后的坐标
-        const xr = x * Math.cos(theta) - y * Math.sin(theta);
-        const yr = x * Math.sin(theta) + y * Math.cos(theta);
+        // 旋转后的相对坐标
+        const xr = scaleA * cosT * cosPhi - scaleB * sinT * sinPhi;
+        const yr = scaleA * cosT * sinPhi + scaleB * sinT * cosPhi;
 
         const px = cx + xr;
         const py = cy + yr;
@@ -136,12 +142,12 @@ export default function MacAdamEllipses() {
     return labelWavelengths
       .map((wl) => {
         const point = SPECTRAL_LOCUS.find(
-          (p) => Math.abs(p.wavelength - wl) < 5
+          (p) => Math.abs(p[0] - wl) < 5
         );
         if (!point) return null;
 
-        const x = mapX(point.x);
-        const y = mapY(point.y);
+        const x = mapX(point[1]);
+        const y = mapY(point[2]);
 
         // 根据位置调整偏移
         let offsetX = 0;

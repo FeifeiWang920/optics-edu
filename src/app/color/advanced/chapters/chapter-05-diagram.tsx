@@ -1,5 +1,4 @@
 import ChapterCard from "@/components/chapter/ChapterCard";
-import CIE1931Explorer from "@/components/CIE1931Explorer";
 
 export function Chapter05Diagram() {
   return (
@@ -10,7 +9,7 @@ export function Chapter05Diagram() {
       cieRef="CIE 15:2004 Section 6.4"
       difficulty="intermediate"
       estimatedTime={12}
-      interactive={<CIE1931Explorer />}
+      interactive={null}
       mathDetail={
         <div className="space-y-4 text-sm">
           <div>
@@ -165,11 +164,6 @@ export function Chapter05Diagram() {
             </div>
           </div>
         </div>
-
-        <p>
-          点击上方的色品图探索器，你可以点击任意位置读取色品坐标，观察其与标准参考点
-          （如 D65 白光）的相对位置关系。尝试点击不同区域，感受色品坐标的变化规律。
-        </p>
 
         <div className="glass-card p-4 rounded-xl">
           <h4 className="text-primary-400 font-bold mb-2">🚗 车灯设计中的应用</h4>

@@ -197,42 +197,51 @@ export const STOCKMAN_SHARPE_LMS_10NM: LMSResponse[] = [
 ];
 
 // ============================================================================
-// MacAdam 椭圆数据 (10 个代表性椭圆)
-// 数据来源：Wyszecki & Stiles, Color Science, 2nd Edition
-// 椭圆参数：中心点 (x, y), 半长轴 a, 半短轴 b, 旋转角度 theta (度)
+// MacAdam 椭圆数据 (25个标准测试色)
 // ============================================================================
+//
+// 数据来源：MacAdam, D.L. (1942). "Visual Sensitivities to Color Differences
+//            in Daylight". JOSA, 32(5), 247-274.
+//
+// 这是 MacAdam 1942 论文中的标准椭圆数据，包含25个测试色的精确测量值。
+// 每个椭圆代表人眼刚好能察觉的颜色差异范围（1阶JND）。
+//
+// 椭圆参数说明：
+// - center: 椭圆中心位置 (CIE 1931 xy 色品坐标)
+// - semiMajor: 半长轴 (色品坐标单位，标准差)
+// - semiMinor: 半短轴 (色品坐标单位，标准差)
+// - angle: 旋转角度 (度，从x轴逆时针旋转)
+// - order: 阶数 (1阶JND)
+// - wavelength: 参考波长 (论文中测试色不按波长排序，此处为估算值)
+//
+// 注：实际1阶椭圆非常小 (半长轴约0.0008-0.0041)，显示时需要放大。
 
 export const MACADAM_ELLIPSES: MacAdamEllipse[] = [
-  // 数据基于 MacAdam 1942, JOSA 32, 247
-  // 中心点位于色品图上的标准测试色，椭圆大小为1阶JND（刚好可觉差）
-  // 半长轴和半短轴单位为色品图坐标单位
-
-  // 紫色区域 (400nm附近)
-  { center: { x: 0.160, y: 0.040 }, semiMajor: 0.006, semiMinor: 0.002, angle: 70, order: 1 },
-
-  // 蓝色区域 (470nm附近)
-  { center: { x: 0.110, y: 0.100 }, semiMajor: 0.005, semiMinor: 0.002, angle: 65, order: 1 },
-
-  // 青色区域 (490nm附近)
-  { center: { x: 0.070, y: 0.250 }, semiMajor: 0.004, semiMinor: 0.0015, angle: 55, order: 1 },
-
-  // 绿色区域 (520nm附近)
-  { center: { x: 0.110, y: 0.600 }, semiMajor: 0.003, semiMinor: 0.001, angle: 40, order: 1 },
-
-  // 黄绿区域 (540nm附近)
-  { center: { x: 0.230, y: 0.680 }, semiMajor: 0.0025, semiMinor: 0.001, angle: 30, order: 1 },
-
-  // 黄色区域 (580nm附近)
-  { center: { x: 0.450, y: 0.500 }, semiMajor: 0.002, semiMinor: 0.0008, angle: 20, order: 1 },
-
-  // 橙色区域 (600nm附近)
-  { center: { x: 0.550, y: 0.400 }, semiMajor: 0.0025, semiMinor: 0.001, angle: 15, order: 1 },
-
-  // 红色区域 (650nm附近)
-  { center: { x: 0.670, y: 0.310 }, semiMajor: 0.004, semiMinor: 0.0015, angle: 10, order: 1 },
-
-  // 品红区域 (连接380nm和780nm的连线附近)
-  { center: { x: 0.300, y: 0.150 }, semiMajor: 0.005, semiMinor: 0.002, angle: 60, order: 1 },
+  { center: { x: 0.131, y: 0.521 }, semiMajor: 0.004520041, semiMinor: 0.002098205, angle: -67.78326306, order: 1, wavelength: undefined },
+  { center: { x: 0.15, y: 0.68 }, semiMajor: 0.008654487, semiMinor: 0.002353294, angle: -76.42672315, order: 1, wavelength: undefined },
+  { center: { x: 0.152, y: 0.365 }, semiMajor: 0.003638623, semiMinor: 0.001900241, angle: -69.44894947, order: 1, wavelength: undefined },
+  { center: { x: 0.16, y: 0.057 }, semiMajor: 0.000848076, semiMinor: 0.000355926, angle: 64.14094669, order: 1, wavelength: undefined },
+  { center: { x: 0.16, y: 0.2 }, semiMajor: 0.002029104, semiMinor: 0.000930673, angle: -78.27453253, order: 1, wavelength: undefined },
+  { center: { x: 0.187, y: 0.118 }, semiMajor: 0.001798351, semiMinor: 0.001123128, angle: 77.09366204, order: 1, wavelength: undefined },
+  { center: { x: 0.212, y: 0.55 }, semiMajor: 0.005258419, semiMinor: 0.002276306, angle: 100.4148988, order: 1, wavelength: undefined },
+  { center: { x: 0.228, y: 0.25 }, semiMajor: 0.003135525, semiMinor: 0.000810828, angle: 69.90047757, order: 1, wavelength: undefined },
+  { center: { x: 0.253, y: 0.125 }, semiMajor: 0.002350529, semiMinor: 0.000507695, angle: 53.99969562, order: 1, wavelength: undefined },
+  { center: { x: 0.258, y: 0.45 }, semiMajor: 0.004468286, semiMinor: 0.002089675, angle: 89.06492759, order: 1, wavelength: undefined },
+  { center: { x: 0.278, y: 0.223 }, semiMajor: 0.002158535, semiMinor: 0.000555771, angle: 61.41329307, order: 1, wavelength: undefined },
+  { center: { x: 0.28, y: 0.385 }, semiMajor: 0.003986714, semiMinor: 0.001490117, angle: 75.16754647, order: 1, wavelength: undefined },
+  { center: { x: 0.3, y: 0.163 }, semiMajor: 0.002731898, semiMinor: 0.000598978, angle: 50.84319447, order: 1, wavelength: undefined },
+  { center: { x: 0.305, y: 0.323 }, semiMajor: 0.002251417, semiMinor: 0.000803114, angle: 58.42806096, order: 1, wavelength: undefined },
+  { center: { x: 0.344, y: 0.284 }, semiMajor: 0.002255129, semiMinor: 0.000923267, angle: 63.17209521, order: 1, wavelength: undefined },
+  { center: { x: 0.365, y: 0.153 }, semiMajor: 0.003208191, semiMinor: 0.001356915, angle: 36.30205384, order: 1, wavelength: undefined },
+  { center: { x: 0.38, y: 0.498 }, semiMajor: 0.00414329, semiMinor: 0.001255984, angle: 70.36772968, order: 1, wavelength: undefined },
+  { center: { x: 0.385, y: 0.393 }, semiMajor: 0.003602534, semiMinor: 0.001516107, angle: 64.29675621, order: 1, wavelength: undefined },
+  { center: { x: 0.39, y: 0.237 }, semiMajor: 0.002400075, semiMinor: 0.000983541, angle: 44.30201971, order: 1, wavelength: undefined },
+  { center: { x: 0.441, y: 0.198 }, semiMajor: 0.002669958, semiMinor: 0.000900779, angle: 32.94859327, order: 1, wavelength: undefined },
+  { center: { x: 0.472, y: 0.399 }, semiMajor: 0.003011026, semiMinor: 0.00139067, angle: 50.70747405, order: 1, wavelength: undefined },
+  { center: { x: 0.475, y: 0.3 }, semiMajor: 0.002802796, semiMinor: 0.001021217, angle: 28.83580982, order: 1, wavelength: undefined },
+  { center: { x: 0.51, y: 0.236 }, semiMajor: 0.001952381, semiMinor: 0.001534192, angle: 17.99791507, order: 1, wavelength: undefined },
+  { center: { x: 0.527, y: 0.35 }, semiMajor: 0.002451086, semiMinor: 0.00129984, angle: 24.18102541, order: 1, wavelength: undefined },
+  { center: { x: 0.596, y: 0.283 }, semiMajor: 0.002381376, semiMinor: 0.001194096, angle: 12.89278246, order: 1, wavelength: undefined },
 ];
 
 // ============================================================================

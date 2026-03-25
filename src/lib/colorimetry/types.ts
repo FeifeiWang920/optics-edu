@@ -145,8 +145,9 @@ export interface MacAdamEllipse {
   center: { x: number; y: number }; // 椭圆中心 (xy 色品坐标)
   semiMajor: number; // 半长轴
   semiMinor: number; // 半短轴
-  angle: number; // 旋转角度 (度)
+  angle: number; // 旋转角度 (度，相对于x轴正方向)
   order: number; // 椭圆阶数 (表示可感知差异的倍数)
+  wavelength?: number; // 对应的波长 (nm)，用于标识位置
 }
 
 // ============================================================================
