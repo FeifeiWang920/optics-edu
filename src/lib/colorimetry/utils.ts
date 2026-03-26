@@ -64,12 +64,11 @@ const CIEDE2000_DEFAULT_PARAMS = {
  * - 汽车行业通用规范
  */
 const DELTA_E_PERCEPTUAL_THRESHOLDS = [
-  { deltaE: 0, description: '无法察觉 (imperceptible)', level: 'excellent', visible: false, acceptable: true },
-  { deltaE: 1.0, description: '专业观察者才能察觉', level: 'excellent', visible: true, acceptable: true },
-  { deltaE: 2.0, description: '普通观察者可以察觉', level: 'good', visible: true, acceptable: true },
-  { deltaE: 3.0, description: '明显差异 (apparent)', level: 'fair', visible: true, acceptable: true },
-  { deltaE: 6.1, description: '显著差异 (significant)', level: 'poor', visible: true, acceptable: false },
-  { deltaE: Infinity, description: '完全不同的颜色', level: 'unacceptable', visible: true, acceptable: false },
+  { deltaE: 1.0, description: '无法察觉 (imperceptible)', level: 'excellent', visible: false, acceptable: true },
+  { deltaE: 2.0, description: '专业观察者才能察觉', level: 'excellent', visible: true, acceptable: true },
+  { deltaE: 3.0, description: '普通观察者可以察觉', level: 'good', visible: true, acceptable: true },
+  { deltaE: 6.0, description: '明显差异 (apparent)', level: 'fair', visible: true, acceptable: true },
+  { deltaE: Infinity, description: '显著差异 (significant)', level: 'poor', visible: true, acceptable: false },
 ];
 
 // ============================================================================
@@ -707,6 +706,56 @@ export function getPerceptualInfo(deltaE: number): {
     level: 'unacceptable',
     visible: true,
     acceptable: false,
+  };
+}
+
+// ============================================================================
+// CIE/ISO 专业评级标准
+// ============================================================================
+
+/**
+ * CIE/ISO 专业评级标准
+ *
+ * 基于 CIE 15:2018、ISO 11664-6:2014 等国际标准文献
+ * 用于印刷、纺织、汽车等行业的质量控制和公差设定
+ *
+ * 注：不同行业和应用场景的阈值可能有所不同
+ * - 印刷行业 (ISO 12647): ΔE*00 < 2.0 通常被视为可接受
+ * - 纺织行业 (AATCC): ΔE*00 < 1.0 为优等品
+ * - 汽车行业: 外观件通常要求 ΔE*00 < 1.0
+ */
+const CIE_ISO_PROFESSIONAL_RATINGS = [
+  { maxDeltaE: 0.5, grade: '优等 (Grade A)', description: '极严格的容差，用于高端印刷和精密匹配', application: '高端印刷、实验室标准' },
+  { maxDeltaE: 1.0, grade: '一等品 (Grade B)', description: '严格的商业容差，肉眼几乎不可察觉', application: '汽车外观件、品牌标志' },
+  { maxDeltaE: 2.0, grade: '合格品 (Grade C)', description: '可接受的商业容差，专业观察者能察觉', application: '一般印刷、纺织品' },
+  { maxDeltaE: 4.0, grade: '边缘合格 (Grade D)', description: '较宽松的容差，明显可见但不严重', application: '包装材料、非关键部件' },
+  { maxDeltaE: Infinity, grade: '不合格 (Fail)', description: '超出可接受范围', application: '需返工或报废' },
+];
+
+/**
+ * 获取 CIE/ISO 专业评级
+ *
+ * @param deltaE - 色差值 (建议使用 ΔE*00)
+ * @returns 专业评级信息
+ */
+export function getProfessionalRating(deltaE: number): {
+  grade: string;
+  description: string;
+  application: string;
+} {
+  for (const rating of CIE_ISO_PROFESSIONAL_RATINGS) {
+    if (deltaE <= rating.maxDeltaE) {
+      return {
+        grade: rating.grade,
+        description: rating.description,
+        application: rating.application,
+      };
+    }
+  }
+  return {
+    grade: '不合格 (Fail)',
+    description: '严重色差',
+    application: '需立即处理',
   };
 }
 

@@ -11,6 +11,7 @@ import {
   xyzToCIELAB,
   hexToRgb,
   getPerceptualInfo,
+  getProfessionalRating,
 } from '@/lib/colorimetry/utils';
 import type { CIELABColor } from '@/lib/colorimetry/types';
 
@@ -59,14 +60,17 @@ export default function ColorDifferenceCalculator() {
       dE76: {
         value: dE76,
         ...getPerceptualInfo(dE76),
+        professionalRating: getProfessionalRating(dE76),
       },
       dE94: {
         value: dE94,
         ...getPerceptualInfo(dE94),
+        professionalRating: getProfessionalRating(dE94),
       },
       dE00: {
         value: dE00,
         ...getPerceptualInfo(dE00),
+        professionalRating: getProfessionalRating(dE00),
       },
     };
   }, [labColors]);
@@ -156,41 +160,99 @@ export default function ColorDifferenceCalculator() {
             perceptualColor={getPerceptualColor(deltaEResults.dE00.value)}
           />
 
-          {/* 主要感知描述 */}
-          <div className="glass-card p-4 rounded-xl">
-            <p className="text-sm text-muted-foreground">感知描述</p>
-            <p className={`text-lg font-medium ${getPerceptualColor(deltaEResults.dE00.value)}`}>
-              {deltaEResults.dE00.description}
-            </p>
+          {/* 色差评价 - 两套标准（基于 ΔE*00） */}
+          <div className="glass-card p-4 rounded-xl space-y-3">
+            {/* 第一套：感知描述 */}
+            <div>
+              <p className="text-sm text-muted-foreground">感知描述（基于 ΔE*00）</p>
+              <p className={`text-lg font-medium ${getPerceptualColor(deltaEResults.dE00.value)}`}>
+                {deltaEResults.dE00.description}
+              </p>
+            </div>
+
+            {/* 第二套：专业评级 */}
+            <div className="pt-3 border-t border-white/10">
+              <p className="text-sm text-muted-foreground">专业评级（基于 ΔE*00）</p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className={`text-lg font-medium ${getPerceptualColor(deltaEResults.dE00.value)}`}>
+                  {deltaEResults.dE00.professionalRating.grade}
+                </span>
+                <span className="text-sm text-gray-400">
+                  — {deltaEResults.dE00.professionalRating.description}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                典型应用：{deltaEResults.dE00.professionalRating.application}
+              </p>
+            </div>
           </div>
 
-          {/* 色差评级说明 */}
-          <div className="glass-card p-4 rounded-xl space-y-3">
+          {/* 色差评级说明 - 两套标准 */}
+          <div className="glass-card p-4 rounded-xl space-y-4">
             <p className="text-sm text-muted-foreground">色差评级标准</p>
-            <div className="grid grid-cols-5 gap-2 text-center">
-              <div className="p-2 rounded bg-emerald-500/10">
-                <p className="text-xs text-emerald-400 font-medium">≤1.0</p>
-                <p className="text-[10px] text-gray-500">无法察觉</p>
-              </div>
-              <div className="p-2 rounded bg-green-500/10">
-                <p className="text-xs text-green-400 font-medium">1.0-2.0</p>
-                <p className="text-[10px] text-gray-500">专业者察觉</p>
-              </div>
-              <div className="p-2 rounded bg-yellow-500/10">
-                <p className="text-xs text-yellow-400 font-medium">2.0-3.0</p>
-                <p className="text-[10px] text-gray-500">普通人察觉</p>
-              </div>
-              <div className="p-2 rounded bg-orange-500/10">
-                <p className="text-xs text-orange-400 font-medium">3.0-6.0</p>
-                <p className="text-[10px] text-gray-500">明显差异</p>
-              </div>
-              <div className="p-2 rounded bg-red-500/10">
-                <p className="text-xs text-red-400 font-medium">&gt;6.0</p>
-                <p className="text-[10px] text-gray-500">显著差异</p>
+
+            {/* 第一套：经验法则（感知描述） */}
+            <div>
+              <p className="text-xs text-gray-400 mb-2">经验法则（感知阈值）</p>
+              <div className="grid grid-cols-5 gap-2 text-center">
+                <div className="p-2 rounded bg-emerald-500/10">
+                  <p className="text-xs text-emerald-400 font-medium">≤1.0</p>
+                  <p className="text-[10px] text-gray-500">无法察觉</p>
+                </div>
+                <div className="p-2 rounded bg-green-500/10">
+                  <p className="text-xs text-green-400 font-medium">1.0-2.0</p>
+                  <p className="text-[10px] text-gray-500">专业者察觉</p>
+                </div>
+                <div className="p-2 rounded bg-yellow-500/10">
+                  <p className="text-xs text-yellow-400 font-medium">2.0-3.0</p>
+                  <p className="text-[10px] text-gray-500">普通人察觉</p>
+                </div>
+                <div className="p-2 rounded bg-orange-500/10">
+                  <p className="text-xs text-orange-400 font-medium">3.0-6.0</p>
+                  <p className="text-[10px] text-gray-500">明显差异</p>
+                </div>
+                <div className="p-2 rounded bg-red-500/10">
+                  <p className="text-xs text-red-400 font-medium">&gt;6.0</p>
+                  <p className="text-[10px] text-gray-500">显著差异</p>
+                </div>
               </div>
             </div>
+
+            {/* 第二套：CIE/ISO 专业评级 */}
+            <div>
+              <p className="text-xs text-gray-400 mb-2">CIE/ISO 专业评级（行业标准）</p>
+              <div className="grid grid-cols-5 gap-2 text-center">
+                <div className="p-2 rounded bg-emerald-500/10 border border-emerald-500/20">
+                  <p className="text-xs text-emerald-400 font-medium">≤0.5</p>
+                  <p className="text-[10px] text-gray-400">优等 (Grade A)</p>
+                  <p className="text-[10px] text-gray-500">高端印刷、实验室</p>
+                </div>
+                <div className="p-2 rounded bg-green-500/10 border border-green-500/20">
+                  <p className="text-xs text-green-400 font-medium">0.5-1.0</p>
+                  <p className="text-[10px] text-gray-400">一等品 (Grade B)</p>
+                  <p className="text-[10px] text-gray-500">汽车外观件</p>
+                </div>
+                <div className="p-2 rounded bg-yellow-500/10 border border-yellow-500/20">
+                  <p className="text-xs text-yellow-400 font-medium">1.0-2.0</p>
+                  <p className="text-[10px] text-gray-400">合格品 (Grade C)</p>
+                  <p className="text-[10px] text-gray-500">一般印刷、纺织</p>
+                </div>
+                <div className="p-2 rounded bg-orange-500/10 border border-orange-500/20">
+                  <p className="text-xs text-orange-400 font-medium">2.0-4.0</p>
+                  <p className="text-[10px] text-gray-400">边缘合格 (Grade D)</p>
+                  <p className="text-[10px] text-gray-500">包装材料</p>
+                </div>
+                <div className="p-2 rounded bg-red-500/10 border border-red-500/20">
+                  <p className="text-xs text-red-400 font-medium">&gt;4.0</p>
+                  <p className="text-[10px] text-gray-400">不合格 (Fail)</p>
+                  <p className="text-[10px] text-gray-500">需返工</p>
+                </div>
+              </div>
+            </div>
+
             <p className="text-[10px] text-gray-500">
-              参考：CIE 15:2018、ISO 11664-6:2014；适用于 ΔE*00 (CIEDE2000)，ΔE*94/76 阈值有所不同
+              参考：CIE 15:2018、ISO 11664-6:2014、ISO 12647（印刷）、AATCC EP6（纺织）；
+              适用于 ΔE*00 (CIEDE2000)，ΔE*94/76 阈值有所不同
             </p>
           </div>
         </div>
