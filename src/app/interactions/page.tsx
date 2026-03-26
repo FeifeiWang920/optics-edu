@@ -160,21 +160,22 @@ export default function InteractionsPage() {
               <text x="5" y="133" fill="#60a5fa" fontSize="8">PMMA n=1.492</text>
 
               {/* ── CASE 1: Small angle ─ partial refraction ── */}
-              {/* Incident ray from bottom-left, angle ~20° from normal */}
+              {/* Incident ray from bottom-left, angle ~30° from normal */}
               {/* Normal at x=70 */}
               <line x1="70" y1="60" x2="70" y2="185" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="3,3"/>
               {/* Incident: from (30,185) to (70,120), θ₁≈30° from normal */}
               <line x1="30" y1="185" x2="70" y2="120" stroke="#f59e0b" strokeWidth="2"/>
               <polygon points="68,128 73,123 70,120" fill="#f59e0b"/>
-              {/* Refracted: sinθ₂=n₁/n₂·sinθ₁=1.492·sin30°/1=0.746→θ₂≈48° from normal, goes upper-left more */}
-              {/* At x=70,y=120, θ₁=30°→tanθ₁=0.577→Δx=40,Δy=69; refracted θ₂=48°→tanθ₂=1.11, Δy=50→Δx=55 to LEFT */}
-              <line x1="70" y1="120" x2="15" y2="70" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="5,3" opacity="0.6"/>
-              <polygon points="19,72 14,68 15,75" fill="#f59e0b" opacity="0.6"/>
+              {/* Refracted: sinθ₂=n₁/n₂·sinθ₁=1.492·sin30°/1=0.746→θ₂≈48° from normal */}
+              {/* 折射光跨越法线到右侧，向远离法线方向偏折（θ₂ > θ₁） */}
+              {/* At x=70,y=120, θ₂=48°→tanθ₂=1.11, Δy=50→Δx=55 to RIGHT */}
+              <line x1="70" y1="120" x2={70 + 55} y2="70" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="5,3" opacity="0.6"/>
+              <polygon points={"119,72 125,68 120,75"} fill="#f59e0b" opacity="0.6"/>
               {/* Angle arcs */}
               <path d="M 70 140 A 20 20 0 0 0 55.4 131.4" fill="none" stroke="#f59e0b" strokeWidth="1" opacity="0.7"/>
               <text x="42" y="147" fill="#f59e0b" fontSize="7">θ₁≈30°</text>
-              <path d="M 70 100 A 20 20 0 0 1 56 90" fill="none" stroke="#f59e0b" strokeWidth="1" opacity="0.5"/>
-              <text x="24" y="100" fill="#f59e0b" fontSize="7">θ₂≈48°</text>
+              <path d="M 70 100 A 20 20 0 0 0 84 90" fill="none" stroke="#f59e0b" strokeWidth="1" opacity="0.5"/>
+              <text x="88" y="100" fill="#f59e0b" fontSize="7">θ₂≈48°</text>
               <text x="18" y="215" fill="#f59e0b" fontSize="7">①小角度→折射透出</text>
 
               {/* ── CASE 2: Critical angle ─ refracted ray grazes the surface ── */}
@@ -287,37 +288,16 @@ export default function InteractionsPage() {
               <p className="text-blue-400">PC：  V ≈ 30.0（色散较大，彩色边缘明显）</p>
             </div>
           </div>
-          {/* Dispersion SVG - Physically Accurate */}
-          <div>
-            <svg viewBox="0 0 260 180" className="w-full" xmlns="http://www.w3.org/2000/svg">
-              {/* Prism: Triangle with points (60,40), (160,140), (160,40) */}
-              <polygon points="60,40 160,140 160,40" fill="rgba(139,92,246,0.1)" stroke="rgba(139,92,246,0.3)" strokeWidth="1.5"/>
-              
-              {/* Incident white light arriving at (60,40)? No, let's hit the center of the slope */}
-              {/* Slope is from (60,40) to (160,140). Midpoint is (110, 90) */}
-              <line x1="10" y1="90" x2="110" y2="90" stroke="white" strokeWidth="2.5" opacity="0.9"/>
-              <text x="5" y="85" fill="#aaa" fontSize="8">入射白光</text>
-
-              {/* Internal dispersed rays from (110,90) to vertical edge x=160 */}
-              {/* Red (less bending): roughly to (160, 95) */}
-              <line x1="110" y1="90" x2="160" y2="95" stroke="#ff4141" strokeWidth="1" opacity="0.4"/>
-              {/* Violet (more bending): roughly to (160, 105) */}
-              <line x1="110" y1="90" x2="160" y2="105" stroke="#8800bb" strokeWidth="1" opacity="0.4"/>
-
-              {/* Outgoing dispersed rays from vertical edge to right */}
-              <line x1="160" y1="95" x2="230" y2="75" stroke="#ff4141" strokeWidth="1.5" opacity="0.8"/>
-              <line x1="160" y1="97" x2="230" y2="85" stroke="#ff8c00" strokeWidth="1.5" opacity="0.8"/>
-              <line x1="160" y1="99" x2="230" y2="95" stroke="#ffff00" strokeWidth="1.5" opacity="0.8"/>
-              <line x1="160" y1="101" x2="230" y2="105" stroke="#00cc00" strokeWidth="1.5" opacity="0.8"/>
-              <line x1="160" y1="103" x2="230" y2="115" stroke="#4444ff" strokeWidth="1.5" opacity="0.8"/>
-              <line x1="160" y1="105" x2="230" y2="125" stroke="#8800bb" strokeWidth="1.5" opacity="0.8"/>
-              
-              <text x="210" y="70" fill="#ff4141" fontSize="7">红光 (n较小)</text>
-              <text x="210" y="135" fill="#8800bb" fontSize="7">紫光 (n较大)</text>
-              
-              <text x="50" y="10" fill="#888" fontSize="8">n_red &lt; n_violet</text>
-              <text x="60" y="165" fill="#666" fontSize="8">白光在两个界面处发生折射，短波长(紫)偏折角更大</text>
-            </svg>
+          {/* Dispersion GIF - 来自 Wikipedia 的标准色散示意图 */}
+          <div className="flex flex-col items-center">
+            <img
+              src="/Light_dispersion_conceptual_waves.gif"
+              alt="光通过三棱镜的色散现象"
+              className="w-full max-w-[280px] rounded-lg"
+            />
+            <p className="text-[10px] text-gray-500 mt-2 text-center">
+              白光经棱镜色散：波长越短（紫光）折射率越大，偏折越明显
+            </p>
           </div>
         </div>
       </section>

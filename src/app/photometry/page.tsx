@@ -99,38 +99,54 @@ export default function PhotometryPage() {
             </div>
           </div>
           <div className="glass-panel p-4">
-            <svg viewBox="0 0 220 170" className="w-full" xmlns="http://www.w3.org/2000/svg">
-              {/* Background sphere */}
-              <ellipse cx="90" cy="85" rx="68" ry="68" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.12)" strokeWidth="1.2"/>
-              {/* Equator ellipse (perspective) */}
-              <ellipse cx="90" cy="103" rx="68" ry="13" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" strokeDasharray="3,3"/>
-              {/*
-                Center O = (90, 85), radius r = 68
-                Solid angle patch on sphere surface:
-                Edge 1: from O, direction angle ~340° from +x → unit vector ~(0.94,-0.34) → end (90+68*0.94, 85+68*(-0.34))=(153.9, 61.9)
-                Edge 2: from O, direction angle ~310° → unit (-0.64,-0.77) → end (90+68*(-0.64),85+68*(-0.77))=(46.5, 32.6)
-                Spherical patch arc connects these two surface points
-              */}
-              {/* Edge rays from center to sphere surface */}
-              <line x1="90" y1="85" x2="153" y2="62" stroke="#888" strokeWidth="1.2"/>
-              <line x1="90" y1="85" x2="47" y2="33" stroke="#888" strokeWidth="1.2"/>
-              {/* r label on one edge */}
-              <text x="122" y="67" fill="#888" fontSize="9">r</text>
-              {/* Spherical patch (arc on sphere surface between the two points) */}
-              <path d="M 153 62 Q 120 20 47 33" fill="rgba(251,191,36,0.25)" stroke="#f59e0b" strokeWidth="1.5"/>
-              {/* Lines from center to patch outline */}
-              <path d="M 90 85 L 153 62 Q 120 20 47 33 Z" fill="rgba(251,191,36,0.1)" stroke="none"/>
-              {/* Label: spherical area A */}
-              <text x="80" y="38" fill="#f59e0b" fontSize="9">球面面积 A</text>
-              {/* Center O */}
-              <circle cx="90" cy="85" r="2.5" fill="#3b82f6"/>
-              <text x="94" y="89" fill="#3b82f6" fontSize="8">O（球心）</text>
-              {/* Solid angle symbol Ω */}
-              <text x="87" y="68" fill="#f59e0b" fontSize="13" fontWeight="bold">Ω</text>
-              {/* Formula */}
-              <text x="5" y="155" fill="#888" fontSize="9" fontWeight="bold">Ω = A / r²</text>
-              <text x="68" y="155" fill="#555" fontSize="9">（球面度, Sr）</text>
-              <text x="5" y="168" fill="#555" fontSize="8">整球 = 4π Sr ≈ 12.57 Sr；半球 = 2π Sr ≈ 6.28 Sr</text>
+            <svg viewBox="0 0 280 200" className="w-full" xmlns="http://www.w3.org/2000/svg">
+              {/* 3D 球体背景 - 带透视的圆 */}
+              <circle cx="140" cy="100" r="75" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+
+              {/* 球体的透视赤道线（虚线椭圆） */}
+              <ellipse cx="140" cy="100" rx="75" ry="20" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="1" strokeDasharray="4,4"/>
+
+              {/* 球体的透视经线（虚线） */}
+              <ellipse cx="140" cy="100" rx="20" ry="75" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" strokeDasharray="4,4"/>
+
+              {/* 立体角的锥形区域 - 球面扇形 */}
+              {/* 球心 O, 半径 r = 75 */}
+              {/* 定义立体角的边界射线 */}
+              {/* 左边界射线：角度约 55° */}
+              <line x1="140" y1="100" x2="183" y2="38" stroke="rgba(251,191,36,0.6)" strokeWidth="1.5"/>
+              {/* 右边界射线：角度约 35° */}
+              <line x1="140" y1="100" x2="201" y2="57" stroke="rgba(251,191,36,0.6)" strokeWidth="1.5"/>
+              {/* 下边界射线：角度约 -15° */}
+              <line x1="140" y1="100" x2="212" y2="80" stroke="rgba(251,191,36,0.6)" strokeWidth="1.5"/>
+
+              {/* 球面上的立体角区域 - 填充的曲面三角形 */}
+              <path d="M 183 38 Q 210 45 201 57 Q 220 65 212 80 Q 195 75 183 38" fill="rgba(251,191,36,0.35)" stroke="#f59e0b" strokeWidth="2"/>
+
+              {/* 立体角区域的弧边（突出显示） */}
+              <path d="M 183 38 Q 210 45 201 57 Q 220 65 212 80" fill="none" stroke="#fbbf24" strokeWidth="2.5" strokeLinecap="round"/>
+
+              {/* 球心点 O */}
+              <circle cx="140" cy="100" r="4" fill="#3b82f6"/>
+              <circle cx="140" cy="100" r="2" fill="#1d4ed8"/>
+
+              {/* 半径标注线 r */}
+              <line x1="140" y1="100" x2="192" y2="48" stroke="#888" strokeWidth="1" strokeDasharray="3,2"/>
+              <text x="158" y="68" fill="#aaa" fontSize="10" fontStyle="italic">r</text>
+
+              {/* 球面面积 A 标注 */}
+              <text x="195" y="50" fill="#fbbf24" fontSize="10" fontWeight="bold">A</text>
+
+              {/* 立体角符号 Ω */}
+              <text x="165" y="78" fill="#fbbf24" fontSize="18" fontWeight="bold">Ω</text>
+
+              {/* 球心标注 O */}
+              <text x="120" y="105" fill="#60a5fa" fontSize="11" fontWeight="bold">O</text>
+
+              {/* 右下角的公式说明框 */}
+              <rect x="15" y="145" width="250" height="45" fill="rgba(0,0,0,0.3)" stroke="rgba(255,255,255,0.1)" strokeWidth="1" rx="6"/>
+              <text x="25" y="165" fill="#fbbf24" fontSize="13" fontWeight="bold">Ω = A / r²</text>
+              <text x="115" y="165" fill="#888" fontSize="11">(球面度, sr)</text>
+              <text x="25" y="182" fill="#666" fontSize="9">整球 = 4π sr ≈ 12.57 sr  |  半球 = 2π sr ≈ 6.28 sr</text>
             </svg>
           </div>
         </div>
