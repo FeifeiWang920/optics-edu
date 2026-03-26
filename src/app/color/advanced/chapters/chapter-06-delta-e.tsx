@@ -71,10 +71,11 @@ export function Chapter06DeltaE() {
           <div>
             <h4 className="font-bold text-primary-400 mb-2">色差评级的经验法则</h4>
             <div className="glass-panel p-3 rounded-lg text-xs space-y-1">
-              <p><span className="text-green-400">ΔE &lt; 1.0</span> — 人眼无法察觉（仪器可测）</p>
-              <p><span className="text-yellow-400">ΔE 1.0-2.0</span> — 仔细观察可察觉</p>
-              <p><span className="text-orange-400">ΔE 2.0-5.0</span> — 明显可察觉</p>
-              <p><span className="text-red-400">ΔE &gt; 5.0</span> — 完全不同的颜色</p>
+              <p><span className="text-emerald-400">ΔE ≤ 1.0</span> — 无法察觉</p>
+              <p><span className="text-green-400">ΔE 1.0-2.0</span> — 专业观察者才能察觉</p>
+              <p><span className="text-yellow-400">ΔE 2.0-3.0</span> — 普通观察者可以察觉</p>
+              <p><span className="text-orange-400">ΔE 3.0-6.0</span> — 明显差异</p>
+              <p><span className="text-red-400">ΔE &gt; 6.0</span> — 显著差异</p>
             </div>
           </div>
         </div>

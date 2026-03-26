@@ -51,16 +51,25 @@ const CIEDE2000_DEFAULT_PARAMS = {
 };
 
 /**
- * 色差感知描述阈值
+ * 色差感知描述阈值 - 基于 CIE 标准和行业实践
+ *
+ * 注意：不同色差公式的阈值不能直接比较
+ * - ΔE*76: 数值偏大，1 JND ≈ 2.3
+ * - ΔE*94: 数值中等，1 JND ≈ 1.0
+ * - ΔE*00: 最精确，1 JND ≈ 1.0
+ *
+ * 参考标准：
+ * - CIE 15:2018 色度学第4版
+ * - ISO 11664-6:2014 CIEDE2000
+ * - 汽车行业通用规范
  */
 const DELTA_E_PERCEPTUAL_THRESHOLDS = [
-  { deltaE: 0, description: '无法察觉', visible: false, acceptable: true },
-  { deltaE: 1, description: '极微小差异，专业观察者勉强可见', visible: true, acceptable: true },
-  { deltaE: 2, description: '微小差异，仔细观察可见', visible: true, acceptable: true },
-  { deltaE: 3.5, description: '可察觉的差异', visible: true, acceptable: true },
-  { deltaE: 5, description: '明显差异', visible: true, acceptable: false },
-  { deltaE: 10, description: '很大差异', visible: true, acceptable: false },
-  { deltaE: Infinity, description: '完全不同的颜色', visible: true, acceptable: false },
+  { deltaE: 0, description: '无法察觉 (imperceptible)', level: 'excellent', visible: false, acceptable: true },
+  { deltaE: 1.0, description: '专业观察者才能察觉', level: 'excellent', visible: true, acceptable: true },
+  { deltaE: 2.0, description: '普通观察者可以察觉', level: 'good', visible: true, acceptable: true },
+  { deltaE: 3.0, description: '明显差异 (apparent)', level: 'fair', visible: true, acceptable: true },
+  { deltaE: 6.1, description: '显著差异 (significant)', level: 'poor', visible: true, acceptable: false },
+  { deltaE: Infinity, description: '完全不同的颜色', level: 'unacceptable', visible: true, acceptable: false },
 ];
 
 // ============================================================================
@@ -353,8 +362,9 @@ export function calculateDeltaE00(
   const C_bar = (C1 + C2) / 2;
 
   // Step 3: 计算 G 因子 (彩度增强因子)
+  // 注意: 25^7 = 6103515625, 不是 25 * C_bar^7
   const C_bar_7 = Math.pow(C_bar, 7);
-  const G = 0.5 * (1 - Math.sqrt(C_bar_7 / (C_bar_7 + 25 * C_bar_7 + 61000000)));
+  const G = 0.5 * (1 - Math.sqrt(C_bar_7 / (C_bar_7 + 6103515625)));
 
   // Step 4: 计算修正后的 a' 值
   const a1_prime = a1 * (1 + G);
@@ -417,10 +427,12 @@ export function calculateDeltaE00(
   const DeltaTheta = 30 * Math.exp(-Math.pow((H_prime_deg - 275) / 25, 2));
   const C_bar_prime = (C1_prime + C2_prime) / 2;
   const C_bar_prime_7 = Math.pow(C_bar_prime, 7);
-  const RC = Math.sqrt(C_bar_prime_7 / (C_bar_prime_7 + 25 * C_bar_prime_7 + 61000000));
+  const RC = Math.sqrt(C_bar_prime_7 / (C_bar_prime_7 + 6103515625));
+  // 注意：使用平均明度 L_bar = (L1 + L2) / 2，不是 L1 + L2
+  const L_bar = (L1 + L2) / 2;
   const SL =
     1 +
-    (0.015 * Math.pow(L1 + L2 - 50, 2)) / Math.sqrt(20 + Math.pow(L1 + L2 - 50, 2));
+    (0.015 * Math.pow(L_bar - 50, 2)) / Math.sqrt(20 + Math.pow(L_bar - 50, 2));
   const SC = 1 + 0.045 * C_bar_prime;
   const SH = 1 + 0.015 * C_bar_prime * T;
 
@@ -484,8 +496,9 @@ export function calculateDeltaE00Full(
   const C1 = Math.sqrt(a1 * a1 + b1 * b1);
   const C2 = Math.sqrt(a2 * a2 + b2 * b2);
   const C_bar = (C1 + C2) / 2;
+  // 注意: 25^7 = 6103515625, 不是 25 * C_bar^7
   const C_bar_7 = Math.pow(C_bar, 7);
-  const G = 0.5 * (1 - Math.sqrt(C_bar_7 / (C_bar_7 + 25 * C_bar_7 + 61000000)));
+  const G = 0.5 * (1 - Math.sqrt(C_bar_7 / (C_bar_7 + 6103515625)));
 
   const a1_prime = a1 * (1 + G);
   const a2_prime = a2 * (1 + G);
@@ -536,10 +549,12 @@ export function calculateDeltaE00Full(
   const DeltaTheta = 30 * Math.exp(-Math.pow((H_prime - 275) / 25, 2));
   const C_bar_prime = (C1_prime + C2_prime) / 2;
   const C_bar_prime_7 = Math.pow(C_bar_prime, 7);
-  const RC = Math.sqrt(C_bar_prime_7 / (C_bar_prime_7 + 25 * C_bar_prime_7 + 61000000));
+  const RC = Math.sqrt(C_bar_prime_7 / (C_bar_prime_7 + 6103515625));
+  // 注意：使用平均明度 L_bar = (L1 + L2) / 2，不是 L1 + L2
+  const L_bar = (L1 + L2) / 2;
   const SL =
     1 +
-    (0.015 * Math.pow(L1 + L2 - 50, 2)) / Math.sqrt(20 + Math.pow(L1 + L2 - 50, 2));
+    (0.015 * Math.pow(L_bar - 50, 2)) / Math.sqrt(20 + Math.pow(L_bar - 50, 2));
   const SC = 1 + 0.045 * C_bar_prime;
   const SH = 1 + 0.015 * C_bar_prime * T;
   const RT = -2 * RC * Math.sin((2 * DeltaTheta * Math.PI) / 180);
@@ -673,6 +688,7 @@ export function getPerceptualNote(deltaE: number): string {
  */
 export function getPerceptualInfo(deltaE: number): {
   description: string;
+  level: 'excellent' | 'good' | 'fair' | 'poor' | 'unacceptable';
   visible: boolean;
   acceptable: boolean;
 } {
@@ -680,6 +696,7 @@ export function getPerceptualInfo(deltaE: number): {
     if (deltaE < threshold.deltaE) {
       return {
         description: threshold.description,
+        level: threshold.level as 'excellent' | 'good' | 'fair' | 'poor' | 'unacceptable',
         visible: threshold.visible,
         acceptable: threshold.acceptable,
       };
@@ -687,6 +704,7 @@ export function getPerceptualInfo(deltaE: number): {
   }
   return {
     description: '完全不同的颜色',
+    level: 'unacceptable',
     visible: true,
     acceptable: false,
   };

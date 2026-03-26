@@ -71,18 +71,31 @@ export default function ColorDifferenceCalculator() {
     };
   }, [labColors]);
 
-  // 获取进度条颜色
+  // 获取进度条颜色 - 基于经验法则阈值
   const getProgressColor = (deltaE: number) => {
-    if (deltaE < 2) return 'bg-green-500';
-    if (deltaE < 5) return 'bg-yellow-500';
-    return 'bg-red-500';
+    if (deltaE <= 1.0) return 'bg-emerald-500';      // 无法察觉
+    if (deltaE <= 2.0) return 'bg-green-500';        // 专业者察觉
+    if (deltaE <= 3.0) return 'bg-yellow-500';       // 普通人察觉
+    if (deltaE <= 6.0) return 'bg-orange-500';       // 明显差异
+    return 'bg-red-500';                             // 显著差异
   };
 
   // 获取感知描述的文字颜色
   const getPerceptualColor = (deltaE: number) => {
-    if (deltaE < 2) return 'text-green-500';
-    if (deltaE < 5) return 'text-yellow-500';
+    if (deltaE <= 1.0) return 'text-emerald-500';
+    if (deltaE <= 2.0) return 'text-green-500';
+    if (deltaE <= 3.0) return 'text-yellow-500';
+    if (deltaE <= 6.0) return 'text-orange-500';
     return 'text-red-500';
+  };
+
+  // 获取质量等级标签
+  const getQualityLabel = (deltaE: number): { text: string; color: string } => {
+    if (deltaE < 0.5) return { text: '优秀', color: 'text-emerald-400 bg-emerald-400/10' };
+    if (deltaE < 1.0) return { text: '良好', color: 'text-green-400 bg-green-400/10' };
+    if (deltaE < 2.0) return { text: '一般', color: 'text-yellow-400 bg-yellow-400/10' };
+    if (deltaE < 4.0) return { text: '较差', color: 'text-orange-400 bg-orange-400/10' };
+    return { text: '不可接受', color: 'text-red-400 bg-red-400/10' };
   };
 
   return (
@@ -150,6 +163,36 @@ export default function ColorDifferenceCalculator() {
               {deltaEResults.dE00.description}
             </p>
           </div>
+
+          {/* 色差评级说明 */}
+          <div className="glass-card p-4 rounded-xl space-y-3">
+            <p className="text-sm text-muted-foreground">色差评级标准</p>
+            <div className="grid grid-cols-5 gap-2 text-center">
+              <div className="p-2 rounded bg-emerald-500/10">
+                <p className="text-xs text-emerald-400 font-medium">≤1.0</p>
+                <p className="text-[10px] text-gray-500">无法察觉</p>
+              </div>
+              <div className="p-2 rounded bg-green-500/10">
+                <p className="text-xs text-green-400 font-medium">1.0-2.0</p>
+                <p className="text-[10px] text-gray-500">专业者察觉</p>
+              </div>
+              <div className="p-2 rounded bg-yellow-500/10">
+                <p className="text-xs text-yellow-400 font-medium">2.0-3.0</p>
+                <p className="text-[10px] text-gray-500">普通人察觉</p>
+              </div>
+              <div className="p-2 rounded bg-orange-500/10">
+                <p className="text-xs text-orange-400 font-medium">3.0-6.0</p>
+                <p className="text-[10px] text-gray-500">明显差异</p>
+              </div>
+              <div className="p-2 rounded bg-red-500/10">
+                <p className="text-xs text-red-400 font-medium">&gt;6.0</p>
+                <p className="text-[10px] text-gray-500">显著差异</p>
+              </div>
+            </div>
+            <p className="text-[10px] text-gray-500">
+              参考：CIE 15:2018、ISO 11664-6:2014；适用于 ΔE*00 (CIEDE2000)，ΔE*94/76 阈值有所不同
+            </p>
+          </div>
         </div>
       )}
 
@@ -191,6 +234,41 @@ export default function ColorDifferenceCalculator() {
                       <p>a*: {labColors.lab2.a.toFixed(2)}</p>
                       <p>b*: {labColors.lab2.b.toFixed(2)}</p>
                     </div>
+                  </div>
+                </div>
+                {/* 参考光源与白点说明 */}
+                <div className="mt-3 p-4 bg-white/5 rounded-lg border border-white/10 space-y-3">
+                  {/* 参考光源 */}
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-400 font-medium">参考光源</p>
+                    <p className="text-xs text-gray-300">
+                      <span className="text-primary-400 font-medium">D65</span>
+                      <span className="text-gray-500"> — 标准日光，色温约6500K，模拟北半球正午平均日光</span>
+                    </p>
+                    <p className="text-[10px] text-gray-500 leading-relaxed">
+                      颜色转换需要指定&quot;在什么光照下观察&quot;。同一物体在不同光源下看起来颜色不同（同色异谱现象）。
+                      CIELAB 使用 D65 作为默认参考光源，这是印刷、显示行业的国际标准。
+                    </p>
+                  </div>
+
+                  {/* 白点 */}
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-400 font-medium">白点 (White Point)</p>
+                    <p className="text-xs text-gray-300">
+                      <span className="text-gray-400 font-mono">XYZ = (0.950, 1.000, 1.089)</span>
+                    </p>
+                    <p className="text-[10px] text-gray-500 leading-relaxed">
+                      白点是&quot;完美漫反射体&quot;在特定光源下的 XYZ 三刺激值，代表该光源下的&quot;纯白&quot;。
+                      CIELAB 公式中，所有颜色都与这个白点比较：L*=100 表示与白点一样亮，a*=b*=0 表示与白点一样不偏色。
+                      更换白点会改变整个颜色空间的数值。
+                    </p>
+                  </div>
+
+                  {/* 转换流程 */}
+                  <div className="pt-2 border-t border-white/5">
+                    <p className="text-[10px] text-gray-600">
+                      转换流程：sRGB → XYZ(D65) → CIELAB(D65白点)
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -342,14 +420,30 @@ function DeltaEResult({
   progressColor,
   perceptualColor,
 }: DeltaEResultProps) {
-  // 进度条最大值设为 15（足够显示明显差异）
-  const progressPercent = Math.min((value / 15) * 100, 100);
+  // 进度条最大值设为 6（覆盖可接受范围）
+  const progressPercent = Math.min((value / 6) * 100, 100);
+
+  // 获取质量等级
+  const getQualityInfo = (deltaE: number): { label: string; bgClass: string } => {
+    if (deltaE <= 1.0) return { label: '无法察觉', bgClass: 'bg-emerald-500/20 text-emerald-400' };
+    if (deltaE <= 2.0) return { label: '专业者察觉', bgClass: 'bg-green-500/20 text-green-400' };
+    if (deltaE <= 3.0) return { label: '普通人察觉', bgClass: 'bg-yellow-500/20 text-yellow-400' };
+    if (deltaE <= 6.0) return { label: '明显差异', bgClass: 'bg-orange-500/20 text-orange-400' };
+    return { label: '显著差异', bgClass: 'bg-red-500/20 text-red-400' };
+  };
+
+  const quality = getQualityInfo(value);
 
   return (
     <div className="glass-card p-4 rounded-xl space-y-2">
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium text-secondary-500">{name}</span>
-        <span className={`text-sm font-bold ${perceptualColor}`}>{value.toFixed(2)}</span>
+        <div className="flex items-center gap-2">
+          <span className={`text-xs px-2 py-0.5 rounded ${quality.bgClass}`}>
+            {quality.label}
+          </span>
+          <span className={`text-sm font-bold ${perceptualColor}`}>{value.toFixed(2)}</span>
+        </div>
       </div>
       <div className="h-2 bg-background/50 rounded-full overflow-hidden">
         <motion.div
@@ -359,7 +453,6 @@ function DeltaEResult({
           className={`h-full ${progressColor} rounded-full`}
         />
       </div>
-      <p className="text-xs text-muted-foreground">{description}</p>
     </div>
   );
 }

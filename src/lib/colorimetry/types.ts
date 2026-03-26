@@ -277,6 +277,7 @@ export interface WavelengthRange {
 export interface PerceptualDescription {
   deltaE: number;
   description: string;
+  level: 'excellent' | 'good' | 'fair' | 'poor' | 'unacceptable';
   visible: boolean;
   acceptable: boolean;
 }
