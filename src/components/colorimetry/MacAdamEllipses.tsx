@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Info } from 'lucide-react';
+import { Info, BookOpen, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import { MACADAM_ELLIPSES } from '@/lib/colorimetry/data';
 import {
   generateCIEChromaticityDataURL,
@@ -11,13 +12,17 @@ import {
   SPECTRAL_LOCUS,
 } from '@/lib/cie-1931';
 
+interface MacAdamEllipsesProps {
+  showDeepDiveLink?: boolean;
+}
+
 /**
  * MacAdam 椭圆可视化组件
  *
  * 在 CIE 1931 xy 色品图上显示 MacAdam 椭圆，展示人眼对颜色差异的感知阈值
  * 注意：椭圆被放大10倍以便观察，实际1阶JND非常小
  */
-export default function MacAdamEllipses() {
+export default function MacAdamEllipses({ showDeepDiveLink = true }: MacAdamEllipsesProps) {
   const [bgImageUrl, setBgImageUrl] = useState<string | null>(null);
   const [zoomLevel, setZoomLevel] = useState(10); // 默认放大10倍
 
@@ -403,13 +408,37 @@ export default function MacAdamEllipses() {
         </p>
         <p className="text-gray-400">
           <strong className="text-secondary-500">椭圆特性：</strong>
-          椭圆大小和方向随颜色区域变化——绿色区域（520-560nm）椭圆最小，表示人眼对绿色变化最敏感；
-          蓝色和红色区域椭圆较大，表示人眼对这些颜色变化较不敏感。
+          椭圆大小和方向随颜色区域变化——紫-蓝区域（380-460nm）椭圆最小，表示人眼对紫蓝色变化最敏感；
+          绿色区域（520-560nm）椭圆较大，表示人眼对绿色变化较不敏感。
         </p>
         <p className="text-gray-400">
           <strong className="text-accent-500">应用意义：</strong>
           MacAdam 椭圆是评估色差公式均匀性的重要工具，也是车灯颜色容差标准制定的参考依据。
         </p>
+
+        {/* 深度解析跳转按钮 */}
+        {showDeepDiveLink && (
+          <div className="pt-4 border-t border-white/10">
+            <Link
+              href="/color/macadam"
+              className="flex items-center justify-between gap-4 p-4 rounded-xl bg-gradient-to-r from-primary-500/10 to-secondary-500/10 border border-primary-500/20 hover:border-primary-500/40 hover:bg-primary-500/5 transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary-500/20">
+                  <BookOpen className="w-5 h-5 text-primary-400" />
+                </div>
+                <div>
+                  <p className="text-primary-300 font-medium">MacAdam 椭圆深度解析</p>
+                  <p className="text-gray-500 text-xs">实验背景、方法、原理与科学意义</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-primary-400 group-hover:text-primary-300">
+                <span className="text-sm">查看详情</span>
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

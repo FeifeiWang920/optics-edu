@@ -5,6 +5,7 @@ import { Chapter03Matching as Chapter03MatchingType } from "./chapter-03-matchin
 import { Chapter04CIE1931 as Chapter04CIE1931Type } from "./chapter-04-cie1931";
 import { Chapter05Diagram as Chapter05DiagramType } from "./chapter-05-diagram";
 import { Chapter06DeltaE as Chapter06DeltaEType } from "./chapter-06-delta-e";
+import { MacAdamDeepDive as MacAdamDeepDiveType } from "./chapter-06b-macadam-deep-dive";
 import { Chapter07Metamerism as Chapter07MetamerismType } from "./chapter-07-metamerism";
 import { Chapter08Automotive as Chapter08AutomotiveType } from "./chapter-08-automotive";
 
@@ -14,6 +15,7 @@ export { Chapter03Matching } from "./chapter-03-matching";
 export { Chapter04CIE1931 } from "./chapter-04-cie1931";
 export { Chapter05Diagram } from "./chapter-05-diagram";
 export { Chapter06DeltaE } from "./chapter-06-delta-e";
+export { MacAdamDeepDive } from "./chapter-06b-macadam-deep-dive";
 export { Chapter07Metamerism } from "./chapter-07-metamerism";
 export { Chapter08Automotive } from "./chapter-08-automotive";
 
@@ -74,6 +76,15 @@ export const CHAPTERS = [
     cieRef: "CIE 15:2004 Section 7",
   },
   {
+    number: 6.5,
+    id: "macadam-deep-dive",
+    title: "MacAdam 椭圆深度解析",
+    subtitle: "人眼色觉差异感知的里程碑实验",
+    difficulty: "advanced" as const,
+    estimatedTime: 25,
+    cieRef: "JOSA 1942, Vol. 32",
+  },
+  {
     number: 7,
     id: "metamerism",
     title: "同色异谱与色适应",
@@ -111,6 +122,8 @@ export function getChapterComponent(number: number) {
       return Chapter05DiagramType;
     case 6:
       return Chapter06DeltaEType;
+    case 6.5:
+      return MacAdamDeepDiveType;
     case 7:
       return Chapter07MetamerismType;
     case 8:
