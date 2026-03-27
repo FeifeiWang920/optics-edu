@@ -165,7 +165,7 @@ export default function ColorimetryAdvancedPage() {
           {/* 版权信息 */}
           <div className="pt-6 border-t border-white/10">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-              <p>© 2026 车灯光学基础知识教育平台。仅供学习交流使用。</p>
+              <p>© 2026 光学理论基础学习平台。仅供学习交流使用。</p>
               <div className="flex items-center gap-4">
                 <span>基于 Next.js 16 + React 19 构建</span>
               </div>

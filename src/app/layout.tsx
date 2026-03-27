@@ -6,16 +6,18 @@ import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Automotive Lighting Optics",
-  description: "An educational platform for automotive lighting optics basics and geometrical optics interactions.",
+  title: "Optics Fundamentals",
+  description: "光学理论基础学习平台，涵盖视觉科学、光度学、色度学等光学工程核心概念。",
 };
 
 export default function RootLayout({

@@ -3,7 +3,7 @@
 @theme {
   --color-background: #050505;
   --color-foreground: #ededed;
-  
+
   --color-primary-50: #eff6ff;
   --color-primary-100: #dbeafe;
   --color-primary-200: #bfdbfe;
@@ -19,9 +19,16 @@
   --color-secondary-500: #8b5cf6;
   --color-accent-500: #06b6d4;
 
+  /* Surface colors with fallback support */
   --color-surface: rgba(255, 255, 255, 0.03);
   --color-surface-hover: rgba(255, 255, 255, 0.08);
   --color-border: rgba(255, 255, 255, 0.1);
+
+  /* Semantic text colors - WCAG AA compliant */
+  --color-text-primary: rgba(255, 255, 255, 0.95);
+  --color-text-secondary: rgba(255, 255, 255, 0.75);
+  --color-text-tertiary: rgba(255, 255, 255, 0.55);
+  --color-text-muted: rgba(255, 255, 255, 0.40);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -34,28 +41,97 @@
     --primary: var(--color-primary-500);
   }
 
+  /* Focus states - visible for keyboard navigation */
+  :focus-visible {
+    outline: 2px solid var(--color-primary-400);
+    outline-offset: 2px;
+  }
+
+  /* Remove default focus for mouse users, keep for keyboard */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
   body {
     background-color: var(--background);
     color: var(--foreground);
     @apply antialiased min-h-screen;
   }
-  
+
   ::selection {
     background-color: rgba(59, 130, 246, 0.3);
     color: #60a5fa;
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
 @layer utilities {
   .glass-panel {
-    @apply bg-surface backdrop-blur-md border border-border rounded-xl shadow-2xl;
+    @apply bg-surface border border-border rounded-xl shadow-2xl;
+    /* Progressive enhancement: use backdrop-blur when supported */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
-  
+
+  /* Fallback for browsers without backdrop-filter support */
+  @supports not (backdrop-filter: blur(12px)) {
+    .glass-panel {
+      background-color: rgba(20, 20, 30, 0.95);
+    }
+  }
+
   .glass-card {
-    @apply bg-surface hover:bg-surface-hover transition-all duration-300 backdrop-blur-sm border border-border rounded-2xl;
+    @apply bg-surface hover:bg-surface-hover transition-colors duration-200 border border-border rounded-2xl;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  @supports not (backdrop-filter: blur(8px)) {
+    .glass-card {
+      background-color: rgba(25, 25, 35, 0.95);
+    }
   }
 
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-500 via-secondary-500 to-accent-500;
+  }
+
+  /* Semantic text utilities */
+  .text-primary {
+    color: var(--color-text-primary);
+  }
+
+  .text-secondary {
+    color: var(--color-text-secondary);
+  }
+
+  .text-tertiary {
+    color: var(--color-text-tertiary);
+  }
+
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+
+  /* Touch target minimum size */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Safe focus styles for interactive elements */
+  .focus-ring {
+    @apply focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 }

@@ -467,7 +467,7 @@ export default function MacAdamDeepDivePage() {
       <footer className="glass-panel border-t border-white/10 mt-16">
         <div className="max-w-6xl mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-            <p>© 2026 车灯光学基础知识教育平台。仅供学习交流使用。</p>
+            <p>© 2026 光学理论基础学习平台。仅供学习交流使用。</p>
             <div className="flex items-center gap-4">
               <span>参考：JOSA 1942, Vol. 32</span>
             </div>
