@@ -1,6 +1,7 @@
 import RayTracer from "@/components/RayTracer";
 import PhaseFunctionVisualizer from "@/components/PhaseFunctionVisualizer";
-import { Zap, TriangleAlert, Droplets, Sigma } from "lucide-react";
+import FermatPrincipleExplorer from "@/components/FermatPrincipleExplorer";
+import { Zap, TriangleAlert, Droplets, Sigma, Lightbulb } from "lucide-react";
 
 export default function InteractionsPage() {
   return (
@@ -222,6 +223,80 @@ export default function InteractionsPage() {
             </svg>
           </div>
 
+        </div>
+      </section>
+
+      {/* Fermat's Principle */}
+      <section className="space-y-6">
+        <h2 className="text-3xl font-bold flex items-center gap-3"><Lightbulb className="text-primary-500" /> 费马原理（Fermat's Principle）</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          <div className="space-y-5 text-gray-300 text-sm leading-relaxed">
+            <p>
+              <strong className="text-white">费马原理</strong>是几何光学的基本原理，它指出：光线从一点传播到另一点时，所选择的路径是使<strong>光程取stationary值</strong>的路径。stationary意味着光程可能取极小值、极大值或拐点值。
+            </p>
+            <div className="p-5 bg-primary-500/5 rounded-xl border border-primary-500/10 space-y-3">
+              <h4 className="font-bold text-white">费马原理的数学表述</h4>
+              <div className="font-mono text-center p-3 bg-black/40 rounded-lg text-primary-300">
+                δ∫n(s)ds = 0
+              </div>
+              <p className="text-xs text-gray-400">光程 L = ∫n ds = c·t（折射率沿路径的积分，正比于传播时间）</p>
+            </div>
+            <div className="p-4 bg-white/5 rounded-xl border border-white/5 space-y-3">
+              <h4 className="font-bold text-white text-xs uppercase tracking-widest">Stationary的深层含义</h4>
+              <p className="text-xs text-gray-400">
+                Stationary不仅指极小值，在某些对称结构中光程也可能取极大值或恒定值。例如椭圆两焦点间反射的光程恒等（所有路径光程相同），双曲面中光线通过两焦点间的路径取极大值。
+              </p>
+            </div>
+            <div className="p-4 bg-secondary-500/5 rounded-xl border border-secondary-500/10 space-y-3">
+              <h4 className="font-bold text-white text-xs uppercase tracking-widest">程函方程（Eikonal Equation）</h4>
+              <div className="font-mono text-center p-2 bg-black/40 rounded-lg text-secondary-300">
+                |∇S|² = n²
+              </div>
+              <p className="text-xs text-gray-400">S为程函（光程函数），描述波前的传播。几何光学是波动光学在波长λ→0时的极限。</p>
+            </div>
+            <div className="p-4 bg-purple-500/5 rounded-xl border border-purple-500/10 space-y-3">
+              <h4 className="font-bold text-white text-xs uppercase tracking-widest">变分法推导斯涅尔定律</h4>
+              <p className="text-xs text-gray-400">
+                从费马原理出发，通过变分法可严格导出折射定律。设界面两侧折射率分别为n₁、n₂，入射角θ₁、折射角θ₂：
+              </p>
+              <div className="font-mono text-center p-2 bg-black/40 rounded-lg text-purple-300">
+                n₁·sin θ₁ = n₂·sin θ₂
+              </div>
+              <p className="text-xs text-gray-400">这正是光线选择光程最短路径的自然结果。</p>
+            </div>
+            <div className="p-4 bg-indigo-500/5 rounded-xl border border-indigo-500/10 space-y-2">
+              <h4 className="font-bold text-indigo-400 text-xs uppercase tracking-widest">量子力学联系：费曼路径积分</h4>
+              <p className="text-xs text-gray-400">
+                费曼路径积分表述指出：粒子从A到B的振幅是所有可能路径的叠加。当波长λ→0时，相位剧烈振荡导致非极值路径相消，仅stationary路径保留——几何光学自然涌现。
+              </p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <p className="text-xs text-gray-500">👆 费马原理探索器 — 观察光程最小化路径</p>
+            <FermatPrincipleExplorer />
+          </div>
+        </div>
+
+        {/* Applications */}
+        <div className="mt-6 pt-6 border-t border-white/10">
+          <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+            <span className="w-1 h-4 bg-primary-500 rounded-full" />
+            车灯光学应用
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 bg-white/5 rounded-lg border border-white/5 space-y-2">
+              <h4 className="font-bold text-primary-400 text-xs uppercase">自由曲面设计</h4>
+              <p className="text-[11px] text-gray-400 leading-relaxed">
+                逆向应用费马原理：从目标配光要求反推光学表面形状。通过计算从光源到目标点的等光程面，构造使所有光线精确到达指定位置的自由曲面反射镜或透镜，实现任意光型设计。
+              </p>
+            </div>
+            <div className="p-4 bg-white/5 rounded-lg border border-white/5 space-y-2">
+              <h4 className="font-bold text-secondary-400 text-xs uppercase">光线追迹的本质</h4>
+              <p className="text-[11px] text-gray-400 leading-relaxed">
+                光学仿真中的光线追迹算法，本质是数值求解费马原理的离散形式。通过迭代寻找使光程stationary的路径，计算光线与曲面的交点和折射/反射方向，预测车灯系统的精确光分布。
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
