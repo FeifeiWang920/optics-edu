@@ -1,4 +1,5 @@
 import RayTracer from "@/components/RayTracer";
+import PhaseFunctionVisualizer from "@/components/PhaseFunctionVisualizer";
 import { Zap, TriangleAlert, Droplets, Sigma } from "lucide-react";
 
 export default function InteractionsPage() {
@@ -298,6 +299,72 @@ export default function InteractionsPage() {
             <p className="text-[10px] text-gray-500 mt-2 text-center">
               白光经棱镜色散：波长越短（紫光）折射率越大，偏折越明显
             </p>
+          </div>
+        </div>
+      </section>
+      {/* Volume Scattering - Phase Function */}
+      <section className="glass-panel p-8 space-y-6">
+        <h2 className="text-2xl font-bold flex items-center gap-3"><Sigma className="text-purple-400" /> 体积散射与相函数（Volume Scattering）</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Left: Theory */}
+          <div className="space-y-4 text-sm text-gray-300">
+            <p>
+              <strong className="text-white">体积散射</strong>发生在介质内部，当光遇到微观不均匀性（填料颗粒、气泡、密度起伏）时偏离原传播方向。与表面散射不同，体积散射在传播路径上连续发生。</p>
+            <div className="p-4 bg-purple-500/5 rounded-xl border border-purple-500/10 space-y-3">
+              <h4 className="font-bold text-purple-400 text-xs uppercase tracking-widest">Henyey-Greenstein 相函数</h4>
+              <p className="text-xs text-gray-400">单参数描述散射角分布，广泛用于光学塑料、生物组织、大气光学：</p>
+              <div className="font-mono text-center p-2 bg-black/40 rounded text-purple-300">
+                p(cosθ) = (1-g²) / [2(1+g²-2g·cosθ)^(3/2)]
+              </div>
+              <p className="text-xs text-gray-400">g：各向异性因子（-1~1）。g&gt;0前向散射（车灯PC/PMMA典型值0.7-0.9）</p>
+            </div>
+            <div className="p-4 bg-indigo-500/5 rounded-xl border border-indigo-500/10 space-y-3">
+              <h4 className="font-bold text-indigo-400 text-xs uppercase tracking-widest">Cornette-Shanks 双参数相函数</h4>
+              <p className="text-xs text-gray-400">改进HG函数，更好描述同时具有前向和后向峰值的散射（如冰晶、特定填料塑料）：</p>
+              <div className="font-mono text-xs text-center p-2 bg-black/40 rounded text-indigo-300 leading-relaxed">
+                p(cosθ) = 3/(2+α) · (1+cos²θ)/(1+α·cosθ)^(3/2)
+              </div>
+              <p className="text-[10px] text-gray-500">α控制各向异性，第二项(1+cos²θ)引入前后向不对称修正</p>
+            </div>
+            <div className="p-3 bg-black/40 rounded font-mono text-xs space-y-1 border border-white/5">
+              <p className="text-green-400">各向同性散射：g = 0</p>
+              <p className="text-blue-400">PC/PMMA颗粒填料：g ≈ 0.75-0.95</p>
+              <p className="text-yellow-400">强前向散射（大颗粒）：g → 0.99</p>
+            </div>
+          </div>
+
+          {/* Right: Interactive Phase Function Visualizer */}
+          <div className="space-y-3">
+            <p className="text-xs text-gray-500">👆 交互式相函数可视化 — 拖动滑块观察g值对散射方向的影响</p>
+            <PhaseFunctionVisualizer />
+          </div>
+        </div>
+
+        {/* Applications */}
+        <div className="mt-6 pt-6 border-t border-white/10">
+          <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+            <span className="w-1 h-4 bg-purple-500 rounded-full" />
+            车灯光学应用
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-4 bg-white/5 rounded-lg border border-white/5 space-y-2">
+              <h4 className="font-bold text-purple-400 text-xs uppercase">雾度材料调控</h4>
+              <p className="text-[11px] text-gray-400 leading-relaxed">
+                通过添加TiO₂等散射填料，精确控制光扩散板的雾度（haze）和透射率。g值决定光在材料内部的"随机行走"路径，影响出光均匀性。
+              </p>
+            </div>
+            <div className="p-4 bg-white/5 rounded-lg border border-white/5 space-y-2">
+              <h4 className="bold text-indigo-400 text-xs uppercase">仿真软件实现</h4>
+              <p className="text-[11px] text-gray-400 leading-relaxed">
+                ASAP、LightTools、Speos等光学仿真软件中，体积散射通过HG或双参数相函数定义。输入μs（散射系数）和g（各向异性因子）即可建模散射体。
+              </p>
+            </div>
+            <div className="p-4 bg-white/5 rounded-lg border border-white/5 space-y-2">
+              <h4 className="font-bold text-blue-400 text-xs uppercase">散射损耗评估</h4>
+              <p className="text-[11px] text-gray-400 leading-relaxed">
+                PC/PMMA中的微小气泡或杂质造成体积散射，使部分光线偏离设计方向成为杂散光。通过测量BSDF反推材料的g值和散射系数。
+              </p>
+            </div>
           </div>
         </div>
       </section>
