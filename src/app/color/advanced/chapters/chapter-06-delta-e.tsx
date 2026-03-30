@@ -96,11 +96,11 @@ export function Chapter06DeltaE() {
           <ul className="text-gray-300 text-sm space-y-2">
             <li className="flex items-start gap-2">
               <span className="text-green-400">•</span>
-              <span><strong>绿色区域</strong>：人眼非常敏感，很小的物理变化就能察觉</span>
+              <span><strong>蓝色区域</strong>：人眼非常敏感，很小的物理变化就能察觉</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-blue-400">•</span>
-              <span><strong>蓝色区域</strong>：人眼相对不敏感，需要较大变化才能察觉</span>
+              <span><strong>绿色区域</strong>：人眼相对不敏感，需要较大变化才能察觉</span>
             </li>
           </ul>
         </div>
