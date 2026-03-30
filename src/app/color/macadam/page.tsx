@@ -217,19 +217,19 @@ export default function MacAdamDeepDivePage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div className="bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-lg text-center">
                   <p className="text-emerald-400 font-medium text-xs">绿色区域</p>
-                  <p className="text-gray-500 text-[10px] mt-1">椭圆小且圆<br />人眼最敏感</p>
+                  <p className="text-gray-500 text-[10px] mt-1">椭圆大且扁<br />人眼最不敏感</p>
                 </div>
                 <div className="bg-blue-500/10 border border-blue-500/20 p-3 rounded-lg text-center">
                   <p className="text-blue-400 font-medium text-xs">蓝色区域</p>
-                  <p className="text-gray-500 text-[10px] mt-1">椭圆大且扁<br />人眼最不敏感</p>
+                  <p className="text-gray-500 text-[10px] mt-1">椭圆小且圆<br />人眼最敏感</p>
                 </div>
                 <div className="bg-red-500/10 border border-red-500/20 p-3 rounded-lg text-center">
                   <p className="text-red-400 font-medium text-xs">红色区域</p>
-                  <p className="text-gray-500 text-[10px] mt-1">椭圆沿光谱<br />方向拉长</p>
+                  <p className="text-gray-500 text-[10px] mt-1">椭圆相对圆<br />各向较均匀</p>
                 </div>
                 <div className="bg-yellow-500/10 border border-yellow-500/20 p-3 rounded-lg text-center">
                   <p className="text-yellow-400 font-medium text-xs">白色区域</p>
-                  <p className="text-gray-500 text-[10px] mt-1">椭圆相对圆<br />各向较均匀</p>
+                  <p className="text-gray-500 text-[10px] mt-1">椭圆沿光谱<br />方向拉长</p>
                 </div>
               </div>
             </div>
