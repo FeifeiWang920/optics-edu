@@ -1,5 +1,6 @@
 import PhotometryVisualizer from "@/components/PhotometryVisualizer";
-import { Eye, BookOpen } from "lucide-react";
+import EquirectangularProjectionExplorer from "@/components/EquirectangularProjectionExplorer";
+import { Eye, BookOpen, Globe } from "lucide-react";
 
 export default function PhotometryPage() {
   return (
@@ -201,6 +202,19 @@ export default function PhotometryPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* Equirectangular Projection */}
+      <section className="space-y-6">
+        <div className="flex items-center gap-3">
+          <Globe className="text-secondary-400" size={28} />
+          <h2 className="text-3xl font-bold">等距圆柱投影：从球面到平面</h2>
+        </div>
+        <p className="text-gray-400 text-sm max-w-3xl">
+          发光强度分布 I(θ, φ) 定义在球面上，但工程应用需要平面的配光图。
+          理解投影原理，才能正确解读 IES/LDT 文件和法规测试报告。
+        </p>
+        <EquirectangularProjectionExplorer />
       </section>
 
       {/* Inverse Square Law */}
