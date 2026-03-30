@@ -1,7 +1,7 @@
 "use client";
 
 import SpectrumSlider from "@/components/SpectrumSlider";
-import { ArrowRight, Zap, Eye, Layers, FlaskConical } from "lucide-react";
+import { ArrowRight, Zap, Eye, Layers, FlaskConical, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
@@ -331,6 +331,17 @@ export default function Home() {
                   光线追迹仿真
                 </li>
               </ul>
+
+              {/* 像差分析按钮 */}
+              <a
+                href="https://optics-aberrations-viewer.minime.top/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 hover:border-blue-400 text-blue-300 hover:text-blue-200 text-sm font-medium rounded-lg transition-all group"
+              >
+                <span>像差分析与可视化</span>
+                <ExternalLink size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </a>
             </motion.div>
 
             <motion.div

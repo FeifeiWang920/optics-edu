@@ -2,7 +2,7 @@ import Link from "next/link";
 import CIE1931Explorer from "@/lib/cie-1931";
 import ColorMixer from "@/components/ColorMixer";
 import BlackbodySlider from "@/components/BlackbodySlider";
-import { Palette, Layers, Box, Info, SunMedium, GraduationCap, ArrowRight } from "lucide-react";
+import { Palette, Layers, Box, Info, SunMedium, GraduationCap, ArrowRight, Scale, Target, Eye, CircleDot } from "lucide-react";
 
 export default function ColorimetryPage() {
   return (
@@ -199,6 +199,159 @@ export default function ColorimetryPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Color Difference Terminology */}
+      <section className="space-y-6">
+        <h2 className="text-3xl font-bold flex items-center gap-3"><Scale className="text-secondary-400" /> 色差术语体系</h2>
+        <p className="text-gray-400 text-sm max-w-3xl">
+          在色度学和颜色工程领域，描述"颜色差异"有多种术语。它们在定义、计算方法和应用场景上各不相同，理解这些差异对准确表达颜色质量要求至关重要。
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* 色差 */}
+          <div className="glass-panel p-5 space-y-3 border-l-4 border-l-primary-500">
+            <div className="flex items-center gap-2">
+              <Scale className="text-primary-400" size={20} />
+              <h4 className="font-bold text-white">色差 (Color Difference)</h4>
+            </div>
+            <p className="text-sm text-gray-400 leading-relaxed">
+              两种颜色之间的<strong>客观数学距离</strong>。常用计算公式包括 ΔE*ab (CIE 1976)、ΔE*cmc、ΔE*94、CIEDE2000 等。
+            </p>
+            <div className="p-2 bg-black/30 rounded text-xs font-mono text-primary-300">
+              ΔE* = √((ΔL*)² + (Δa*)² + (Δb*)²)
+            </div>
+            <p className="text-[11px] text-gray-500">
+              应用场景：颜色质量控制、批次一致性检验
+            </p>
+          </div>
+
+          {/* 色容差 */}
+          <div className="glass-panel p-5 space-y-3 border-l-4 border-l-secondary-500">
+            <div className="flex items-center gap-2">
+              <Target className="text-secondary-400" size={20} />
+              <h4 className="font-bold text-white">色容差 (Color Tolerance)</h4>
+            </div>
+            <p className="text-sm text-gray-400 leading-relaxed">
+              产品规格或法规规定的<strong>最大允许色差</strong>。是一个"通过/不通过"的判定阈值。
+            </p>
+            <div className="p-2 bg-secondary-500/10 rounded text-xs text-secondary-300">
+              例：ECE法规规定制动灯红色容差为特定色度区域边界
+            </div>
+            <p className="text-[11px] text-gray-500">
+              应用场景：法规合规检验、产品规格书
+            </p>
+          </div>
+
+          {/* 颜色宽容量 */}
+          <div className="glass-panel p-5 space-y-3 border-l-4 border-l-accent-500">
+            <div className="flex items-center gap-2">
+              <Eye className="text-accent-400" size={20} />
+              <h4 className="font-bold text-white">颜色宽容量 (Matching Tolerance)</h4>
+            </div>
+            <p className="text-sm text-gray-400 leading-relaxed">
+              人眼<strong>无法察觉差异</strong>的颜色变化范围。基于 MacAdam 椭圆实验，描述人眼感知阈值。
+            </p>
+            <div className="p-2 bg-accent-500/10 rounded text-xs text-accent-300">
+              约1个 MacAdam 椭圆单位（标准观察者条件下）
+            </div>
+            <p className="text-[11px] text-gray-500">
+              应用场景：视觉评估、容差标准制定依据
+            </p>
+          </div>
+
+          {/* JND */}
+          <div className="glass-panel p-5 space-y-3 border-l-4 border-l-green-500">
+            <div className="flex items-center gap-2">
+              <CircleDot className="text-green-400" size={20} />
+              <h4 className="font-bold text-white">恰可察觉差异 (JND)</h4>
+            </div>
+            <p className="text-sm text-gray-400 leading-relaxed">
+              <strong>Just Noticeable Difference</strong>，人眼能够分辨的最小颜色差异。在均匀色空间中约等于1个色差单位。
+            </p>
+            <div className="p-2 bg-green-500/10 rounded text-xs text-green-300">
+              1 JND ≈ 1 ΔE*ab（近似值，实际因色区而异）
+            </div>
+            <p className="text-[11px] text-gray-500">
+              应用场景：显示设备校准、视觉感知研究
+            </p>
+          </div>
+
+          {/* 色差椭圆 */}
+          <div className="glass-panel p-5 space-y-3 border-l-4 border-l-purple-500">
+            <div className="flex items-center gap-2">
+              <Box className="text-purple-400" size={20} />
+              <h4 className="font-bold text-white">色差椭圆 (Color Ellipse)</h4>
+            </div>
+            <p className="text-sm text-gray-400 leading-relaxed">
+              MacAdam 实验得到的<strong>颜色匹配误差分布</strong>，用椭圆描述人眼在不同色区的敏感度差异。
+            </p>
+            <div className="p-2 bg-purple-500/10 rounded text-xs text-purple-300">
+              绿色区域椭圆小（敏感），蓝色区域椭圆大（迟钝）
+            </div>
+            <p className="text-[11px] text-gray-500">
+              应用场景：均匀色空间设计基础
+            </p>
+          </div>
+
+          {/* 感知色差 */}
+          <div className="glass-panel p-5 space-y-3 border-l-4 border-l-yellow-500">
+            <div className="flex items-center gap-2">
+              <Palette className="text-yellow-400" size={20} />
+              <h4 className="font-bold text-white">感知色差 (Perceptual ΔE)</h4>
+            </div>
+            <p className="text-sm text-gray-400 leading-relaxed">
+              考虑人眼<strong>非均匀感知特性</strong>的色差计算，如 CIEDE2000，比简单的欧氏距离更准确。
+            </p>
+            <div className="p-2 bg-yellow-500/10 rounded text-xs text-yellow-300">
+              ΔE*cmc、CIEDE2000 等先进公式
+            </div>
+            <p className="text-[11px] text-gray-500">
+              应用场景：高精度颜色匹配、学术研究
+            </p>
+          </div>
+        </div>
+
+        {/* Summary Table */}
+        <div className="glass-panel p-6 overflow-x-auto">
+          <h4 className="font-bold text-white mb-4">术语对比总览</h4>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left border-b border-white/10">
+                <th className="pb-3 text-gray-400 font-medium">术语</th>
+                <th className="pb-3 text-gray-400 font-medium">本质</th>
+                <th className="pb-3 text-gray-400 font-medium">量化方式</th>
+                <th className="pb-3 text-gray-400 font-medium">典型数值</th>
+              </tr>
+            </thead>
+            <tbody className="text-gray-300">
+              <tr className="border-b border-white/5">
+                <td className="py-3 font-medium text-primary-400">色差</td>
+                <td className="py-3">客观距离</td>
+                <td className="py-3">ΔE*ab, CIEDE2000</td>
+                <td className="py-3">0.5 ~ 10+</td>
+              </tr>
+              <tr className="border-b border-white/5">
+                <td className="py-3 font-medium text-secondary-400">色容差</td>
+                <td className="py-3">规格限制</td>
+                <td className="py-3">法规区域边界</td>
+                <td className="py-3">依产品而定</td>
+              </tr>
+              <tr className="border-b border-white/5">
+                <td className="py-3 font-medium text-accent-400">颜色宽容量</td>
+                <td className="py-3">感知阈值</td>
+                <td className="py-3">MacAdam 椭圆</td>
+                <td className="py-3">约 1 个椭圆单位</td>
+              </tr>
+              <tr>
+                <td className="py-3 font-medium text-green-400">JND</td>
+                <td className="py-3">最小可辨差</td>
+                <td className="py-3">统计阈值 (50%概率)</td>
+                <td className="py-3">~1 ΔE*ab</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </section>
     </div>
