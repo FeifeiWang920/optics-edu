@@ -288,7 +288,7 @@ export default function ColorimetryPage() {
               MacAdam 实验得到的<strong>颜色匹配误差分布</strong>，用椭圆描述人眼在不同色区的敏感度差异。
             </p>
             <div className="p-2 bg-purple-500/10 rounded text-xs text-purple-300">
-              绿色区域椭圆小（敏感），蓝色区域椭圆大（迟钝）
+              蓝色区域椭圆小（敏感），绿色区域椭圆大（迟钝）
             </div>
             <p className="text-[11px] text-gray-500">
               应用场景：均匀色空间设计基础

@@ -112,7 +112,7 @@ export function Chapter06DeltaE() {
             人眼刚好能察觉颜色差异的区域（1 阶阈值，放大 10 倍显示）。
           </p>
           <p className="text-gray-300 text-sm leading-relaxed">
-            椭圆的大小和方向随位置变化：绿色区域椭圆小（敏感），蓝色区域椭圆大（不敏感）。
+            椭圆的大小和方向随位置变化：蓝色区域椭圆小（敏感），绿色区域椭圆大（不敏感）。
             这直观地展示了 CIE 1931 的不均匀性。
           </p>
         </div>
